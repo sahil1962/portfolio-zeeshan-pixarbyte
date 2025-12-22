@@ -1,3 +1,5 @@
+// app/components/Hero.tsx
+
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">

@@ -1,3 +1,5 @@
+// app/components/Publications.tsx
+
 export default function Publications() {
   const publications = [
     {

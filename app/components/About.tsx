@@ -1,3 +1,5 @@
+// app/components/About.tsx
+
 export default function About() {
   const interests = [
     { title: "Algebraic Topology", description: "Homotopy theory, fundamental groups, and homology" },
