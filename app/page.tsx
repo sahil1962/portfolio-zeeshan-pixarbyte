@@ -9,6 +9,8 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <div className="min-h-screen">
