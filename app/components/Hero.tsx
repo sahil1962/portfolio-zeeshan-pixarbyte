@@ -7,17 +7,17 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-slate-50 via-blue-50/50 to-indigo-100/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 dark:bg-blue-500/5 rounded-full blur-3xl animate-blob"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-indigo-400/10 dark:bg-indigo-500/5 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-20 left-1/2 w-80 h-80 bg-purple-400/10 dark:bg-purple-500/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="absolute top-20 left-10 w-120 h-72 bg-blue-400/30 dark:bg-blue-500/5 rounded-full blur-3xl animate-blob pointer-events-none"></div>
+        <div className="absolute top-40 right-20 w-150 h-96 bg-indigo-400/30 dark:bg-indigo-500/5 rounded-full blur-3xl animate-blob animation-delay-2000 pointer-events-none"></div>
+        <div className="absolute -bottom-20 left-1/2 w-110 h-80 bg-purple-400/30 dark:bg-purple-500/5 rounded-full blur-3xl animate-blob animation-delay-4000 pointer-events-none"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <div className="space-y-5 animate-fadeIn">
           {/* Profile Image */}
           <div className="flex justify-center ">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-indigo-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
+              <div className="absolute -inset-1 bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500 animate-gradient"></div>
               <div className="relative w-44 h-44 sm:w-52 sm:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden ring-4 ring-white dark:ring-slate-900 shadow-2xl transform group-hover:scale-105 transition duration-500">
                 <Image
                   src="/profile.jpg"
@@ -48,7 +48,7 @@ export default function Hero() {
 
           <div className="space-y-4">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Dr. Zeeshan<span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Zamurred</span>
+              Dr. Zeeshan<span className="bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient"> Zamurred</span>
             </h1>
             <p className="text-xl sm:text-2xl lg:text-3xl text-slate-600 dark:text-slate-300 font-light tracking-wide">
               Research Mathematician & Academic
@@ -78,10 +78,9 @@ export default function Hero() {
           <div className="flex flex-wrap gap-6 justify-center pt-0">
             <a
               href="#publications"
-              className="group relative px-8 py-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105"
+              className="group relative px-8 py-4 bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 animate-gradient"
             >
               <span className="relative z-10">View Publications</span>
-              <div className="absolute inset-0 bg-linear-to-r from-blue-700 to-indigo-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </a>
             <a
               href="#notes"
