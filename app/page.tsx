@@ -7,6 +7,7 @@ import Publications from './components/Publications';
 import NotesMarketplace from './components/NotesMarketplace';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Cart from './components/Cart';
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <Cart />
     </div>
   );
 }

@@ -3,8 +3,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 
-interface Note {
+export interface Note {
   id: string;
   title: string;
   description: string;
@@ -18,6 +19,7 @@ interface Note {
 
 export default function NotesMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { addToCart, isInCart } = useCart();
 
   const notes: Note[] = [
     {
@@ -177,10 +179,24 @@ export default function NotesMarketplace() {
                       Preview
                     </a>
                     <button
-                      onClick={() => alert(`Processing purchase for: ${note.title}`)}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium shadow-lg shadow-blue-500/30"
+                      onClick={() => addToCart(note)}
+                      disabled={isInCart(note.id)}
+                      className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-lg ${
+                        isInCart(note.id)
+                          ? 'bg-green-600 text-white cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30'
+                      }`}
                     >
-                      Buy Now
+                      {isInCart(note.id) ? (
+                        <span className="flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          In Cart
+                        </span>
+                      ) : (
+                        'Add to Cart'
+                      )}
                     </button>
                   </div>
                 </div>
