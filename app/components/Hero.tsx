@@ -1,10 +1,32 @@
 // app/components/Hero.tsx
 
+import Image from 'next/image';
+
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <div className="space-y-8">
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden ring-4 ring-blue-500/20 shadow-2xl">
+                <Image
+                  src="/profile.jpg"
+                  alt="Dr. Alexander Theorem"
+                  width={224}
+                  height={224}
+                  priority
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 dark:text-white">
               Dr. Alexander <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Theorem</span>
