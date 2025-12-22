@@ -11,7 +11,7 @@ export default function Footer() {
             <h3 className="text-2xl font-bold mb-4">
               <span className="text-white">Dr. </span>
               <span className="bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                Alexander Theorem
+                Zeeshan Zamurred
               </span>
             </h3>
             <p className="text-slate-400 mb-4 max-w-md">
@@ -59,7 +59,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-sm">
-            {currentYear} Dr. Alexander Theorem. All rights reserved.
+            {currentYear} Dr. Zeeshan Zamurred. All rights reserved.
           </p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-blue-400 transition-colors" aria-label="LinkedIn">

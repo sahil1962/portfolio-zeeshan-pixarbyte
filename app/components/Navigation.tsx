@@ -43,7 +43,7 @@ export default function Navigation() {
               <span className="text-2xl font-extrabold">
                 <span className="text-slate-900 dark:text-white">Dr. </span>
                 <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Theorem
+                  Zeeshan
                 </span>
               </span>
             </a>
