@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 
 export interface Note {
@@ -29,8 +29,13 @@ export default function NotesMarketplace() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent duplicate fetches in React Strict Mode (development)
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     fetchNotesFromR2();
   }, []);
 
@@ -173,7 +178,7 @@ export default function NotesMarketplace() {
               >
                 <div className="p-6 space-y-4">
                   {/* PDF Icon */}
-                  <div className="flex items-center justify-center mb-4">
+                  <div className="flex items-center justify-start mb-4">
                     <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-xl flex items-center justify-center">
                       <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
@@ -233,11 +238,10 @@ export default function NotesMarketplace() {
                       <button
                         onClick={() => addToCart(note)}
                         disabled={isInCart(note.id)}
-                        className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-lg ${
-                          isInCart(note.id)
+                        className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-lg ${isInCart(note.id)
                             ? 'bg-green-600 text-white cursor-not-allowed'
                             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/30'
-                        }`}
+                          }`}
                       >
                         {isInCart(note.id) ? (
                           <span className="flex items-center justify-center gap-1">

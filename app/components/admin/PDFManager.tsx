@@ -1,6 +1,7 @@
+// app/components/admin/PDFManager.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface PDF {
   key: string;
@@ -14,6 +15,7 @@ export default function PDFManager() {
   const [pdfs, setPdfs] = useState<PDF[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   const fetchPDFs = async () => {
     try {
@@ -37,6 +39,10 @@ export default function PDFManager() {
   };
 
   useEffect(() => {
+    // Prevent duplicate fetches in React Strict Mode (development)
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     fetchPDFs();
   }, []);
 
