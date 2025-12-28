@@ -1,4 +1,5 @@
-// app/lib/r2.ts
+// Dynamic imports to work with Turbopack on Windows
+const BUCKET_NAME = process.env.R2_BUCKET_NAME || '';
 
 export interface PDFMetadata {
   key: string;
@@ -13,32 +14,16 @@ export interface PDFMetadata {
   topics?: string;
 }
 
-// Helper to validate and get environment variables
-function getR2Config() {
-  const accountId = process.env.R2_ACCOUNT_ID;
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  const bucketName = process.env.R2_BUCKET_NAME;
-  const publicUrl = process.env.R2_PUBLIC_URL;
-
-  if (!accountId || !accessKeyId || !secretAccessKey || !bucketName || !publicUrl) {
-    throw new Error('Missing required R2 environment variables');
-  }
-
-  return { accountId, accessKeyId, secretAccessKey, bucketName, publicUrl };
-}
-
 // Helper to get S3 client with dynamic import
 async function getS3Client() {
   const { S3Client } = await import('@aws-sdk/client-s3');
-  const config = getR2Config();
 
   return new S3Client({
     region: 'auto',
-    endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
+      accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
     },
   });
 }
@@ -49,12 +34,11 @@ async function getS3Client() {
 export async function uploadPDF(file: Buffer, fileName: string, metadata?: Record<string, string>): Promise<PDFMetadata> {
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
-  const config = getR2Config();
 
   const key = `pdfs/${Date.now()}-${fileName}`;
 
   const command = new PutObjectCommand({
-    Bucket: config.bucketName,
+    Bucket: BUCKET_NAME,
     Key: key,
     Body: file,
     ContentType: 'application/pdf',
@@ -68,7 +52,7 @@ export async function uploadPDF(file: Buffer, fileName: string, metadata?: Recor
     name: fileName,
     size: file.length,
     uploadedAt: new Date(),
-    url: `${config.publicUrl}/${key}`,
+    url: `${process.env.R2_PUBLIC_URL}/${key}`,
   };
 }
 
@@ -78,10 +62,9 @@ export async function uploadPDF(file: Buffer, fileName: string, metadata?: Recor
 export async function listPDFs(): Promise<PDFMetadata[]> {
   const { ListObjectsV2Command, HeadObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
-  const config = getR2Config();
 
   const command = new ListObjectsV2Command({
-    Bucket: config.bucketName,
+    Bucket: BUCKET_NAME,
   });
 
   const response = await client.send(command);
@@ -99,7 +82,7 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
       try {
         // Get metadata for this file
         const headCommand = new HeadObjectCommand({
-          Bucket: config.bucketName,
+          Bucket: BUCKET_NAME,
           Key: item.Key,
         });
         const headResponse = await client.send(headCommand);
@@ -109,7 +92,7 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
           name: item.Key?.split('/').pop() || item.Key || '',
           size: item.Size || 0,
           uploadedAt: item.LastModified || new Date(),
-          url: `${config.publicUrl}/${item.Key}`,
+          url: `${process.env.R2_PUBLIC_URL}/${item.Key}`,
           // Include metadata from upload
           title: headResponse.Metadata?.title,
           description: headResponse.Metadata?.description,
@@ -125,7 +108,7 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
           name: item.Key?.split('/').pop() || item.Key || '',
           size: item.Size || 0,
           uploadedAt: item.LastModified || new Date(),
-          url: `${config.publicUrl}/${item.Key}`,
+          url: `${process.env.R2_PUBLIC_URL}/${item.Key}`,
         };
       }
     })
@@ -141,10 +124,9 @@ export async function getPresignedDownloadUrl(key: string): Promise<string> {
   const { GetObjectCommand } = await import('@aws-sdk/client-s3');
   const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
   const client = await getS3Client();
-  const config = getR2Config();
 
   const command = new GetObjectCommand({
-    Bucket: config.bucketName,
+    Bucket: BUCKET_NAME,
     Key: key,
   });
 
@@ -157,10 +139,9 @@ export async function getPresignedDownloadUrl(key: string): Promise<string> {
 export async function deletePDF(key: string): Promise<void> {
   const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
-  const config = getR2Config();
 
   const command = new DeleteObjectCommand({
-    Bucket: config.bucketName,
+    Bucket: BUCKET_NAME,
     Key: key,
   });
 

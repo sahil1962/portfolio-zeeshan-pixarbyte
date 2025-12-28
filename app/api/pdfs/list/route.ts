@@ -1,5 +1,3 @@
-// app/api/pdfs/list/route.ts
-
 import { NextResponse } from 'next/server';
 import { listPDFs } from '@/app/lib/r2';
 
