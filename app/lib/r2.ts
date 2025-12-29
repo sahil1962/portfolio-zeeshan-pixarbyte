@@ -1,3 +1,4 @@
+// app/lib/r2.ts
 // Dynamic imports to work with Turbopack on Windows
 const BUCKET_NAME = process.env.R2_BUCKET_NAME || '';
 
