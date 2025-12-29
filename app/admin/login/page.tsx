@@ -12,7 +12,7 @@ function LoginForm() {
   const [error, setError] = useState('');
   const searchParams = useSearchParams();
 
-  const urlError = searchParams?.get('error');
+  const urlError = searchParams.get('error');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
