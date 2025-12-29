@@ -52,7 +52,7 @@ npm install @sendgrid/mail
 ```
 ```typescript
 import sgMail from '@sendgrid/mail';
-sgMail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 await sgMail.send({
   to: emailContent.to,

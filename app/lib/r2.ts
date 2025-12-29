@@ -1,5 +1,5 @@
 // Dynamic imports to work with Turbopack on Windows
-const BUCKET_NAME = process.env.NEXT_PUBLIC_R2_BUCKET_NAME || '';
+const BUCKET_NAME = process.env.R2_BUCKET_NAME || '';
 
 export interface PDFMetadata {
   key: string;
@@ -20,10 +20,10 @@ async function getS3Client() {
 
   return new S3Client({
     region: 'auto',
-    endpoint: `https://${process.env.NEXT_PUBLIC_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     credentials: {
-      accessKeyId: process.env.NEXT_PUBLIC_R2_ACCESS_KEY_ID || '',
-      secretAccessKey: process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY || '',
+      accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
     },
   });
 }
