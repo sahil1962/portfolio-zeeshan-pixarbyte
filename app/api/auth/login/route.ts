@@ -4,9 +4,9 @@ import { SignJWT } from 'jose';
 import { randomBytes } from 'crypto';
 import { getJWTSecret } from '@/lib/jwt-secret';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+sgMail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY!);
 
-const AUTHORIZED_EMAILS = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
+const AUTHORIZED_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,13 +35,13 @@ export async function POST(request: NextRequest) {
       .setIssuedAt()
       .sign(getJWTSecret());
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
     const magicLink = `${baseUrl}/api/auth/verify?token=${token}`;
 
     // Send email with magic link
     const msg = {
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL!,
+      from: process.env.NEXT_PUBLIC_SENDGRID_FROM_EMAIL!,
       subject: 'Admin Login - Magic Link',
       text: `Click this link to login to your admin panel: ${magicLink}\n\nThis link will expire in 15 minutes.`,
       html: `
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       error: errorMessage,
-      details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
+      details: process.env.NEXT_PUBLIC_NODE_ENV === 'development' && error instanceof Error ? error.message : undefined
     }, { status: 500 });
   }
 }

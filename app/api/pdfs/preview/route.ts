@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify environment variables
-    if (!process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID ||
-        !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_BUCKET_NAME) {
+    if (!process.env.NEXT_PUBLIC_R2_ACCOUNT_ID || !process.env.NEXT_PUBLIC_R2_ACCESS_KEY_ID ||
+        !process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY || !process.env.NEXT_PUBLIC_R2_BUCKET_NAME) {
       return NextResponse.json(
         { success: false, error: 'Server configuration error' },
         { status: 500 }
@@ -31,15 +31,15 @@ export async function GET(request: NextRequest) {
     const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
     const client = new S3Client({
       region: 'auto',
-      endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      endpoint: `https://${process.env.NEXT_PUBLIC_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
       credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+        accessKeyId: process.env.NEXT_PUBLIC_R2_ACCESS_KEY_ID,
+        secretAccessKey: process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY,
       },
     });
 
     const command = new GetObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
+      Bucket: process.env.NEXT_PUBLIC_R2_BUCKET_NAME,
       Key: key,
     });
 

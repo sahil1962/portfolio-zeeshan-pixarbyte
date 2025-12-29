@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     // Set HTTP-only cookie
     response.cookies.set('admin_session', sessionToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
