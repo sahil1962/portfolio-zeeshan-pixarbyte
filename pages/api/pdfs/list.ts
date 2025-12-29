@@ -9,11 +9,11 @@ export default async function handler(
 ) {
   try {
     if (
-      !process.env.NEXT_PUBLIC_R2_ACCOUNT_ID ||
-      !process.env.NEXT_PUBLIC_R2_ACCESS_KEY_ID ||
-      !process.env.NEXT_PUBLIC_R2_SECRET_ACCESS_KEY ||
-      !process.env.NEXT_PUBLIC_R2_BUCKET_NAME ||
-      !process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+      !process.env.R2_ACCOUNT_ID ||
+      !process.env.R2_ACCESS_KEY_ID ||
+      !process.env.R2_SECRET_ACCESS_KEY ||
+      !process.env.R2_BUCKET_NAME ||
+      !process.env.R2_PUBLIC_URL
     ) {
       console.error('Missing R2 environment variables');
       return res.status(500).json({
