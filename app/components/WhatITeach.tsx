@@ -117,7 +117,7 @@ export default function WhatITeach() {
                   Teaching Approach
                 </h3>
                 <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                  All lessons are broken down into <span className="font-semibold text-blue-600 dark:text-blue-400">clear methods</span>, <span className="font-semibold text-blue-600 dark:text-blue-400">worked examples</span>, and <span className="font-semibold text-blue-600 dark:text-blue-400">exam tips</span> to ensure you're fully prepared for success.
+                  All lessons are broken down into <span className="font-semibold text-blue-600 dark:text-blue-400">clear methods</span>, <span className="font-semibold text-blue-600 dark:text-blue-400">worked examples</span>, and <span className="font-semibold text-blue-600 dark:text-blue-400">exam tips</span> to ensure you&apos;re fully prepared for success.
                 </p>
               </div>
             </div>

@@ -1,4 +1,5 @@
 // app/components/Footer.tsx
+import Link from 'next/link';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -22,19 +23,19 @@ export default function Footer() {
             <h4 className="font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="hover:text-blue-400 transition-colors">Home</a>
+                <Link href="/" className="hover:text-blue-400 transition-colors">Home</Link>
               </li>
               <li>
-                <a href="#about" className="hover:text-blue-400 transition-colors">About</a>
+                <Link href="/about" className="hover:text-blue-400 transition-colors">About</Link>
               </li>
               <li>
-                <a href="/videos" className="hover:text-blue-400 transition-colors">Videos</a>
+                <Link href="/videos" className="hover:text-blue-400 transition-colors">Videos</Link>
               </li>
               <li>
-                <a href="/resources" className="hover:text-blue-400 transition-colors">Resources</a>
+                <Link href="/resources" className="hover:text-blue-400 transition-colors">Resources</Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
+                <Link href="/contact" className="hover:text-blue-400 transition-colors">Contact</Link>
               </li>
             </ul>
           </div>

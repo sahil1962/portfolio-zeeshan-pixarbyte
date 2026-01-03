@@ -4,14 +4,9 @@
 
 export default function FeaturedLessons() {
   const featuredVideos = [
-    { id: "__Kk0HkYPSs", title: "A-Level Maths Video Tutorial", category: "Popular" },
-    { id: "Y3czq4E5hjg", title: "A-Level Maths Explained", category: "Popular" },
-    { id: "XrwqDHgt-HI", title: "Step-by-Step Solution", category: "Popular" },
-    { id: "5oqAJfgHNUs", title: "Exam Question Walkthrough", category: "Popular" },
-    { id: "x8UjJ4rWXM0", title: "Core Maths Tutorial", category: "Popular" },
-    { id: "_Iz9WYjfYLs", title: "Advanced Concepts Made Easy", category: "Popular" },
-    { id: "SHH5T2y6xKU", title: "Practice Question Solution", category: "Popular" },
-    { id: "VirYXQN5Lsc", title: "Key Topic Breakdown", category: "Popular" }
+    { id: "fDEQgC4pR_A", title: "A-Level Maths Video Tutorial", category: "Popular" },
+    { id: "U5TjZ8s0KRo", title: "A-Level Maths Explained", category: "Popular" },
+    { id: "Uptq5JZaGV0", title: "Step-by-Step Solution", category: "Popular" }
   ];
 
   return (
@@ -46,7 +41,7 @@ export default function FeaturedLessons() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {featuredVideos.map((video, index) => (
             <div
               key={index}
@@ -54,13 +49,13 @@ export default function FeaturedLessons() {
             >
               {/* Video Container */}
               <div className="relative pb-[56.25%] overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <div className="absolute inset-0 bg-black/10 dark:bg-black/20 group-hover:bg-black/5 dark:group-hover:bg-black/30 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
+                {/* <div className="absolute inset-0 bg-black/10 dark:bg-black/20 group-hover:bg-black/5 dark:group-hover:bg-black/30 transition-colors duration-300 z-10 flex items-center justify-center pointer-events-none">
                   <div className="w-16 h-16 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-300">
                     <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
-                </div>
+                </div> */}
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
                   src={`https://www.youtube.com/embed/${video.id}`}
