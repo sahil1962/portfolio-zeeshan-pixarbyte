@@ -81,8 +81,8 @@ export async function GET(request: NextRequest) {
     for (const page of pages) {
       const { width, height } = page.getSize();
 
-      // Add "Dr. Zeeshan" watermark
-      page.drawText('Dr. Zeeshan', {
+      // Add "Zeeshan" watermark
+      page.drawText('Zeeshan', {
         x: width / 2 - 100,
         y: height / 2 - 10,
         size: 60,

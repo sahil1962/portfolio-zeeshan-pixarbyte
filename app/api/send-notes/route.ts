@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
               </div>
               <div class="content">
                 <p>Dear ${customerName},</p>
-                <p>Thank you for purchasing mathematical notes from Dr. Alexander Theorem. Your order has been processed successfully.</p>
+                <p>Thank you for purchasing mathematical notes from Zeeshan Maths. Your order has been processed successfully.</p>
 
                 <h3>Order Details (${orderDate})</h3>
                 ${items.map((item: { title: string; price: number; pages: number }) => `
@@ -73,11 +73,11 @@ export async function POST(request: NextRequest) {
                 </p>
 
                 <p>Happy studying!</p>
-                <p>Best regards,<br>Dr. Alexander Theorem</p>
+                <p>Best regards,<br>Zeeshan</p>
               </div>
               <div class="footer">
                 <p>This is an automated email. Please do not reply directly to this message.</p>
-                <p>&copy; ${new Date().getFullYear()} Dr. Alexander Theorem. All rights reserved.</p>
+                <p>&copy; ${new Date().getFullYear()} Zeeshan Maths. All rights reserved.</p>
               </div>
             </div>
           </body>

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dr. Mathematics | Research & Academic Notes",
-  description: "Portfolio of a research mathematician specializing in pure mathematics, topology, and abstract algebra. Explore publications and purchase comprehensive mathematical notes.",
+  title: "Zeeshan Maths | A-Level Maths Resources",
+  description: "Structured Edexcel A-Level Maths and Further Maths video lessons and resources. Step-by-step explanations, exam-focused content, and practice materials.",
 };
 
 export default function RootLayout({

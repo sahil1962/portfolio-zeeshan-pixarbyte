@@ -2,10 +2,11 @@
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import About from './components/About';
-import Publications from './components/Publications';
+import WhatITeach from './components/WhatITeach';
+import FeaturedLessons from './components/FeaturedLessons';
 import NotesMarketplace from './components/NotesMarketplace';
-import Contact from './components/Contact';
+import WhyLearnWithMe from './components/WhyLearnWithMe';
+import MailingList from './components/MailingList';
 import Footer from './components/Footer';
 import Cart from './components/Cart';
 
@@ -17,10 +18,11 @@ export default function Home() {
       <Navigation />
       <main>
         <Hero />
-        <About />
-        <Publications />
+        <WhatITeach />
+        <FeaturedLessons />
         <NotesMarketplace />
-        <Contact />
+        <WhyLearnWithMe />
+        <MailingList />
       </main>
       <Footer />
       <Cart />

@@ -19,10 +19,11 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { href: '#about', label: 'About' },
-    { href: '#publications', label: 'Publications' },
-    { href: '#notes', label: 'Notes' },
-    { href: '#contact', label: 'Contact' }
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/videos', label: 'Videos' },
+    { href: '/resources', label: 'Resources' },
+    { href: '/contact', label: 'Contact' }
   ];
 
   return (
@@ -40,11 +41,8 @@ export default function Navigation() {
               {/* <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-300">
                 <span className="text-white font-bold text-xl">D</span>
               </div> */}
-              <span className="text-2xl font-extrabold">
-                <span className="text-slate-900 dark:text-white">Dr. </span>
-                <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Zeeshan
-                </span>
+              <span className="text-2xl font-extrabold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Zeeshan Zamurred
               </span>
             </a>
           </div>
@@ -87,7 +85,7 @@ export default function Navigation() {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-red-200 dark:border-slate-700 shadow-xl">
+        <div className="md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700 shadow-xl">
           <div className="px-4 py-6 space-y-2">
             {navLinks.map((link) => (
               <a
