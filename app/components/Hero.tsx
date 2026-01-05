@@ -110,8 +110,15 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 -right-4 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4">
+              {/* YouTube Logo Badge */}
+              <div className="absolute -top-4 -left-4 w-20 h-20 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </div>
+
+              {/* Certified Educator Badge - Positioned below the profile photo */}
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 min-w-max">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
                     <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,21 +128,6 @@ export default function Hero() {
                   <div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-white">Certified Educator</div>
                     <div className="text-xs text-slate-600 dark:text-slate-400">A-Level Specialist</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating stats card */}
-              <div className="absolute -top-4 -left-4 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">Success Rate</div>
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">95%</div>
                   </div>
                 </div>
               </div>

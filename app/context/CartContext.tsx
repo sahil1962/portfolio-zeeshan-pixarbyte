@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface Note {
   id: string;
@@ -30,8 +30,50 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = 'notes-cart';
+
+// Helper function to load cart from localStorage
+function loadCartFromStorage(): CartItem[] {
+  if (typeof window === 'undefined') return []; // SSR safety
+
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (stored) {
+      const parsedCart = JSON.parse(stored);
+      // Validate cart data structure
+      if (Array.isArray(parsedCart)) {
+        return parsedCart;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load cart from localStorage:', error);
+    // Clear corrupted data
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
+  }
+  return [];
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (cart.length > 0) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+      } else {
+        localStorage.removeItem(CART_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
+      // Handle quota exceeded or other localStorage errors
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded. Cart will not persist.');
+      }
+    }
+  }, [cart]);
 
   const addToCart = (note: Note) => {
     setCart((prevCart) => {

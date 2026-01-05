@@ -1,101 +1,183 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { Elements } from '@stripe/react-stripe-js';
+import { getStripe } from '@/lib/stripe';
+import PaymentForm from './PaymentForm';
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+type Step = 'email' | 'otp' | 'payment' | 'success';
+
 export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { cart, getCartTotal, clearCart } = useCart();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    cardNumber: '',
-    expiry: '',
-    cvv: '',
-    address: '',
-    city: '',
-    country: '',
-    zipCode: ''
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  // Multi-step flow state
+  const [step, setStep] = useState<Step>('email');
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [cartHash, setCartHash] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+
+  // Loading and error states
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [retryAfter, setRetryAfter] = useState(0);
+
+  // Countdown timer for rate limiting
+  useEffect(() => {
+    if (retryAfter > 0) {
+      const timer = setInterval(() => {
+        setRetryAfter((prev) => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [retryAfter]);
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setStep('email');
+      setEmail('');
+      setOtp('');
+      setCartHash('');
+      setClientSecret('');
+      setError('');
+      setRetryAfter(0);
+    }
+  }, [isOpen]);
+
+  // Step 1: Send OTP
+  const handleSendOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/checkout/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          cartTotal: getCartTotal(),
+          items: cart.map((item) => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            key: item.id, // Use id as key for R2
+          })),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 429) {
+        // Rate limited
+        const match = data.error.match(/(\d+) seconds/);
+        if (match) {
+          setRetryAfter(parseInt(match[1]));
+        }
+        setError(data.error);
+      } else if (!response.ok) {
+        setError(data.error || 'Failed to send verification code');
+      } else {
+        setCartHash(data.cartHash);
+        setStep('otp');
+      }
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Step 2: Verify OTP
+  const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsProcessing(true);
+    setError('');
+    setIsLoading(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch('/api/checkout/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          otp,
+          cartHash,
+          items: cart.map((item) => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            key: item.id,
+          })),
+          total: getCartTotal(),
+        }),
+      });
 
-    // Send email with notes (simulated)
-    const emailData = {
-      to: formData.email,
-      customerName: formData.name,
-      items: cart.map(item => ({
-        title: item.title,
-        price: item.price,
-        pages: item.pages
-      })),
-      total: getCartTotal(),
-      orderDate: new Date().toLocaleDateString()
-    };
+      const data = await response.json();
 
-    // In a real app, this would be an API call to your backend
-    console.log('Sending email with notes:', emailData);
+      if (response.status === 429) {
+        const match = data.error.match(/(\d+) seconds/);
+        if (match) {
+          setRetryAfter(parseInt(match[1]));
+        }
+        setError(data.error);
+      } else if (!response.ok) {
+        setError(data.error || 'Verification failed');
+      } else {
+        setClientSecret(data.clientSecret);
+        setStep('payment');
+      }
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    // Simulate email API call
-    await fetch('/api/send-notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(emailData)
-    }).catch(() => {
-      // Fallback if API not set up yet
-      console.log('Email would be sent to:', formData.email);
-    });
-
-    setIsProcessing(false);
-    setIsSuccess(true);
-
-    // Clear cart and reset after 3 seconds
+  // Step 3: Payment success callback
+  const handlePaymentSuccess = () => {
+    setStep('success');
+    // Clear cart and close modal after 4 seconds
     setTimeout(() => {
       clearCart();
-      setIsSuccess(false);
-      setFormData({
-        name: '',
-        email: '',
-        cardNumber: '',
-        expiry: '',
-        cvv: '',
-        address: '',
-        city: '',
-        country: '',
-        zipCode: ''
-      });
       onClose();
-    }, 3000);
+    }, 4000);
+  };
+
+  // Step 3: Payment error callback
+  const handlePaymentError = (errorMessage: string) => {
+    setError(errorMessage);
   };
 
   if (!isOpen) return null;
 
+  const stripePromise = getStripe();
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {isSuccess ? (
+        {/* Success Step */}
+        {step === 'success' && (
           <div className="p-8 text-center">
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-10 h-10 text-green-600 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
@@ -105,230 +187,213 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               Your purchase has been completed successfully.
             </p>
             <p className="text-slate-600 dark:text-slate-400">
-              The PDF notes have been sent to <span className="font-semibold text-blue-600 dark:text-blue-400">{formData.email}</span>
+              Download links have been sent to{' '}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">
+                {email}
+              </span>
             </p>
             <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               <p className="text-sm text-slate-700 dark:text-slate-300">
-                Please check your email inbox (and spam folder) for the download links.
+                Please check your email inbox (and spam folder) for the download
+                links. They are valid for 7 days.
               </p>
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* Other Steps */}
+        {step !== 'success' && (
           <>
+            {/* Header */}
             <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-800 z-10">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Checkout
-              </h3>
+              <div>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                  Checkout
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  {step === 'email' && 'Step 1: Verify your email'}
+                  {step === 'otp' && 'Step 2: Enter verification code'}
+                  {step === 'payment' && 'Step 3: Complete payment'}
+                </p>
+              </div>
               <button
                 onClick={onClose}
                 className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             <div className="p-6">
+              {/* Order Summary */}
               <div className="mb-6 bg-slate-50 dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
-                <h4 className="font-semibold text-slate-900 dark:text-white mb-3">Order Summary</h4>
+                <h4 className="font-semibold text-slate-900 dark:text-white mb-3">
+                  Order Summary
+                </h4>
                 <div className="space-y-2">
                   {cart.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-slate-600 dark:text-slate-400">{item.title}</span>
-                      <span className="font-medium text-slate-900 dark:text-white">${item.price.toFixed(2)}</span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {item.title}
+                      </span>
+                      <span className="font-medium text-slate-900 dark:text-white">
+                        ${item.price.toFixed(2)}
+                      </span>
                     </div>
                   ))}
                   <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between font-bold">
                     <span className="text-slate-900 dark:text-white">Total</span>
-                    <span className="text-blue-600 dark:text-blue-400">${getCartTotal().toFixed(2)}</span>
+                    <span className="text-blue-600 dark:text-blue-400">
+                      ${getCartTotal().toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <h4 className="font-semibold text-slate-900 dark:text-white mb-4">Contact Information</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        placeholder="John Doe"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Email Address * (Notes will be sent here)
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-slate-900 dark:text-white mb-4">Payment Information</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="cardNumber" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Card Number *
-                      </label>
-                      <input
-                        type="text"
-                        id="cardNumber"
-                        name="cardNumber"
-                        value={formData.cardNumber}
-                        onChange={handleChange}
-                        required
-                        maxLength={16}
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        placeholder="1234 5678 9012 3456"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="expiry" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          Expiry Date *
-                        </label>
-                        <input
-                          type="text"
-                          id="expiry"
-                          name="expiry"
-                          value={formData.expiry}
-                          onChange={handleChange}
-                          required
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="cvv" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          CVV *
-                        </label>
-                        <input
-                          type="text"
-                          id="cvv"
-                          name="cvv"
-                          value={formData.cvv}
-                          onChange={handleChange}
-                          required
-                          maxLength={3}
-                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                          placeholder="123"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-slate-900 dark:text-white mb-4">Billing Address</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="address" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Street Address *
-                      </label>
-                      <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        placeholder="123 Main St"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="city" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          id="city"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                          placeholder="New York"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="zipCode" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          ZIP Code *
-                        </label>
-                        <input
-                          type="text"
-                          id="zipCode"
-                          name="zipCode"
-                          value={formData.zipCode}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                          placeholder="10001"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="country" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Country *
-                      </label>
-                      <input
-                        type="text"
-                        id="country"
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
-                        placeholder="United States"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
-                >
-                  {isProcessing ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      Processing Payment...
-                    </>
-                  ) : (
-                    `Pay $${getCartTotal().toFixed(2)}`
+              {/* Error Display */}
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-sm text-red-700 dark:text-red-400">
+                    {error}
+                  </p>
+                  {retryAfter > 0 && (
+                    <p className="text-xs text-red-600 dark:text-red-500 mt-2">
+                      Retry in {retryAfter} seconds...
+                    </p>
                   )}
-                </button>
+                </div>
+              )}
 
-                <p className="text-xs text-center text-slate-500 dark:text-slate-400">
-                  Your payment information is secure and encrypted. Notes will be sent to your email immediately after purchase.
-                </p>
-              </form>
+              {/* Step 1: Email */}
+              {step === 'email' && (
+                <form onSubmit={handleSendOTP} className="space-y-6">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
+                      placeholder="your@email.com"
+                      disabled={isLoading || retryAfter > 0}
+                    />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                      We&apos;ll send a verification code to this email
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading || retryAfter > 0 || !email}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                  >
+                    {isLoading ? 'Sending...' : 'Send Verification Code'}
+                  </button>
+                </form>
+              )}
+
+              {/* Step 2: OTP */}
+              {step === 'otp' && (
+                <form onSubmit={handleVerifyOTP} className="space-y-6">
+                  <div className="text-center mb-4">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      We sent a 6-digit code to{' '}
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                        {email}
+                      </span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setStep('email')}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-1"
+                    >
+                      Change email
+                    </button>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="otp"
+                      className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                    >
+                      Verification Code *
+                    </label>
+                    <input
+                      type="text"
+                      id="otp"
+                      value={otp}
+                      onChange={(e) =>
+                        setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
+                      }
+                      required
+                      maxLength={6}
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white text-center text-2xl letter-spacing-wide font-mono"
+                      placeholder="000000"
+                      disabled={isLoading || retryAfter > 0}
+                    />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
+                      Code expires in 10 minutes
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading || retryAfter > 0 || otp.length !== 6}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                  >
+                    {isLoading ? 'Verifying...' : 'Verify Code'}
+                  </button>
+                </form>
+              )}
+
+              {/* Step 3: Payment */}
+              {step === 'payment' && clientSecret && stripePromise && (
+                <Elements
+                  stripe={stripePromise}
+                  options={{
+                    clientSecret
+                    // appearance: {
+                    //   theme: 'stripe',
+                    //   variables: {
+                    //     colorPrimary: '#2563eb',
+                    //     colorBackground: '#ffffff',
+                    //     colorText: '#1e293b',
+                    //     colorDanger: '#ef4444',
+                    //     fontFamily: 'system-ui, sans-serif',
+                    //     spacingUnit: '4px',
+                    //     borderRadius: '8px',
+                    //   },
+                    // },
+                    // loader: 'auto',
+                  }}
+                >
+                  <PaymentForm
+                    email={email}
+                    total={getCartTotal()}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                  />
+                </Elements>
+              )}
             </div>
           </>
         )}

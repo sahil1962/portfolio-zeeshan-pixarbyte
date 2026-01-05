@@ -118,9 +118,14 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
 }
 
 /**
- * Get a presigned URL for downloading a PDF (expires in 1 hour)
+ * Get a presigned URL for downloading a PDF
+ * @param key - The R2 object key
+ * @param expiresIn - Expiry time in seconds (default: 3600 = 1 hour)
  */
-export async function getPresignedDownloadUrl(key: string): Promise<string> {
+export async function getPresignedDownloadUrl(
+  key: string,
+  expiresIn: number = 3600
+): Promise<string> {
   const { GetObjectCommand } = await import('@aws-sdk/client-s3');
   const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
   const client = await getS3Client();
@@ -130,7 +135,7 @@ export async function getPresignedDownloadUrl(key: string): Promise<string> {
     Key: key,
   });
 
-  return await getSignedUrl(client, command, { expiresIn: 3600 });
+  return await getSignedUrl(client, command, { expiresIn });
 }
 
 /**
