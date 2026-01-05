@@ -96,11 +96,11 @@ export default function AboutPage() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
-                Hi, I'm <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Zeeshan Zamurred</span>
+                Hi, I&apos;m <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Zeeshan Zamurred</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-                A passionate mathematics educator dedicated to helping A-Level students achieve their full potential. Through clear explanations and exam-focused teaching, I've helped thousands of students master Edexcel A-Level Maths and Further Maths.
+                A passionate mathematics educator dedicated to helping A-Level students achieve their full potential. Through clear explanations and exam-focused teaching, I&apos;ve helped thousands of students master Edexcel A-Level Maths and Further Maths.
               </p>
 
               {/* Stats */}
