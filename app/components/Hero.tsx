@@ -102,10 +102,14 @@ export default function Hero() {
               </div>
 
               {/* YouTube Logo Badge */}
-              <div className="absolute -top-4 -left-4 w-20 h-20 bg-linear-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
+              <div className="absolute -top-4 -left-1 w-20 h-20 rounded-full overflow-hidden shadow-lg">
+                <Image
+                  src="/youtube_logo.jpg"
+                  alt="YouTube"
+                  width={80}
+                  height={80}
+                  className="object-cover w-full h-full"
+                />
               </div>
 
               {/* Certified Educator Badge - Positioned below the profile photo */}
