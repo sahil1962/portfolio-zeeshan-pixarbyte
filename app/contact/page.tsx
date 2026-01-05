@@ -2,56 +2,10 @@
 
 'use client';
 
-import { useState } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus('success');
-        setTimeout(() => {
-          setFormData({ name: '', email: '', subject: '', message: '' });
-          setStatus('idle');
-        }, 3000);
-      } else {
-        setStatus('error');
-        console.error('Error:', data.error);
-        setTimeout(() => setStatus('idle'), 5000);
-      }
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const socialLinks = [
     {
@@ -108,38 +62,6 @@ export default function ContactPage() {
     }
   ];
 
-  const contactMethods = [
-    {
-      title: "Email",
-      description: "Send me a message anytime",
-      detail: "Use the form on this page",
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      )
-    },
-    {
-      title: "Response Time",
-      description: "I aim to respond within",
-      detail: "24-48 hours",
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      )
-    },
-    {
-      title: "Best For",
-      description: "Questions about lessons",
-      detail: "Resources, or collaborations",
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      )
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
@@ -157,51 +79,27 @@ export default function ContactPage() {
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-full mb-6">
-                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                  <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
                 </svg>
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Get in Touch</span>
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Connect With Me</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
-                Contact Me
+                Let&apos;s Connect
               </h1>
               <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                Have questions about A-Level Maths, resources, or lessons? I&apos;d love to hear from you!
+                Follow me on social media for updates, tips, and daily A-Level Maths content
               </p>
-            </div>
-
-            {/* Contact Methods */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
-              {contactMethods.map((method, index) => (
-                <div
-                  key={index}
-                  className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-                >
-                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
-                    {method.icon}
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                    {method.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                    {method.description}
-                  </p>
-                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                    {method.detail}
-                  </p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
 
-        {/* Main Contact Section */}
+        {/* Social Links Section */}
         <section className="py-20 bg-white dark:bg-slate-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Left - Social Links */}
-              <div className="space-y-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="space-y-6">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
                     Connect With Me
@@ -254,138 +152,6 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Right - Contact Form */}
-              <div>
-                <form onSubmit={handleSubmit} className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                    Send a Message
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
-                        Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        disabled={status === 'loading' || status === 'success'}
-                        className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white font-medium placeholder-slate-400 disabled:opacity-60"
-                        placeholder="Your name"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        disabled={status === 'loading' || status === 'success'}
-                        className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white font-medium placeholder-slate-400 disabled:opacity-60"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
-                        Subject *
-                      </label>
-                      <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        disabled={status === 'loading' || status === 'success'}
-                        className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white font-medium placeholder-slate-400 disabled:opacity-60"
-                        placeholder="What is this about?"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
-                        Message *
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        rows={6}
-                        disabled={status === 'loading' || status === 'success'}
-                        className="w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white resize-none font-medium placeholder-slate-400 disabled:opacity-60"
-                        placeholder="Tell me how I can help you..."
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={status === 'loading' || status === 'success'}
-                      className="group w-full px-8 py-5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {status === 'loading' ? (
-                        <>
-                          <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Sending...</span>
-                        </>
-                      ) : status === 'success' ? (
-                        <>
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Message Sent!</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Send Message</span>
-                          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                          </svg>
-                        </>
-                      )}
-                    </button>
-
-                    {status === 'success' && (
-                      <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-xl">
-                        <p className="text-sm text-green-700 dark:text-green-300 font-medium flex items-center gap-2">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          Thank you for your message! I&apos;ll get back to you soon.
-                        </p>
-                      </div>
-                    )}
-
-                    {status === 'error' && (
-                      <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-xl">
-                        <p className="text-sm text-red-700 dark:text-red-300 font-medium flex items-center gap-2">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                          </svg>
-                          Failed to send message. Please try again or contact me directly via social media.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </form>
-              </div>
-            </div>
           </div>
         </section>
       </main>

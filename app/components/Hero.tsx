@@ -20,25 +20,16 @@ export default function Hero() {
 
           {/* Left Column - Content */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Badge */}
-            {/* <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-full">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">81.7K+ Students Learning</span>
-            </div> */}
-
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
-                <span className="text-slate-900 dark:text-white">Master</span>
+                <span className="text-slate-900 dark:text-white">Edexcel A-Level</span>
                 <br />
                 <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-                  Edexcel A-Level
+                  and Further Maths 
                 </span>
                 <br />
-                <span className="text-slate-900 dark:text-white">Mathematics</span>
+                <span className="text-slate-900 dark:text-white">Made Clear</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">

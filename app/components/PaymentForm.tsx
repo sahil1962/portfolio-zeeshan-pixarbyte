@@ -48,7 +48,7 @@ export default function PaymentForm({
       } else {
         onSuccess();
       }
-    } catch (err) {
+    } catch {
       onError('An unexpected error occurred');
     } finally {
       setIsProcessing(false);

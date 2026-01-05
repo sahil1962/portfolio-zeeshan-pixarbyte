@@ -10,6 +10,18 @@ import Cart from '../components/Cart';
 export default function ResourcesPage() {
   const resourceCategories = [
     {
+      title: "Revision Packs",
+      description: "Comprehensive summary PowerPoints and RAG trackers for effective revision.",
+      status: "Available",
+      features: ["Weekly Consolidation", "Exam Practice", "Exam season"],
+      icon: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+          <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+      )
+    },
+    {
       title: "Topic Worksheets and Multiple Choice Quizzes",
       description: "Focused practice by topic with increasing difficulty and fully worked solutions.",
       status: "Coming soon",
@@ -28,18 +40,6 @@ export default function ResourcesPage() {
       icon: (
         <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd" />
-        </svg>
-      )
-    },
-    {
-      title: "Revision Packs",
-      description: "Comprehensive summary PowerPoints and RAG trackers for effective revision.",
-      status: "Available",
-      features: ["Weekly Consolidation", "Exam Practice", "Exam season"],
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-          <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
         </svg>
       )
     }
