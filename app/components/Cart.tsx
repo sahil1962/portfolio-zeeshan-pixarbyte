@@ -18,7 +18,7 @@ export default function Cart() {
       <div className="fixed bottom-8 right-8 z-40">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-2xl transition-all hover:scale-110"
+          className="relative bg-orange-600 hover:bg-orange-700 text-white rounded-full p-4 shadow-2xl transition-all hover:scale-110"
           aria-label="Shopping cart"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@ export default function Cart() {
             <div className="p-6 border-t border-slate-200 dark:border-slate-700 space-y-4">
               <div className="flex justify-between items-center text-lg font-bold">
                 <span className="text-slate-900 dark:text-white">Total:</span>
-                <span className="text-blue-600 dark:text-blue-400">
+                <span className="text-orange-600 dark:text-orange-400">
                   ${getCartTotal().toFixed(2)}
                 </span>
               </div>
@@ -102,7 +102,7 @@ export default function Cart() {
                   setShowCheckout(true);
                   setIsOpen(false);
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30"
               >
                 Proceed to Checkout
               </button>

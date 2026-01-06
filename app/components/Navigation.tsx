@@ -39,10 +39,10 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-20">
           <div className="shrink-0">
             <Link href="/" className="group flex items-center gap-2">
-              {/* <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-300">
+              {/* <div className="w-10 h-10 rounded-lg bg-linear-to-br from-orange-600 to-amber-600 flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-300">
                 <span className="text-white font-bold text-xl">D</span>
               </div> */}
-              <span className="text-2xl font-extrabold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-extrabold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                 Zeeshan Zamurred
               </span>
             </Link>
@@ -53,10 +53,10 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors group"
+                className="relative px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors group"
               >
                 <span className="relative z-10">{link.label}</span>
-                <span className="absolute inset-0 bg-blue-50 dark:bg-slate-800 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-200 origin-center"></span>
+                <span className="absolute inset-0 bg-orange-50 dark:bg-slate-800 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-200 origin-center"></span>
               </Link>
             ))}
 
@@ -93,7 +93,7 @@ export default function Navigation() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 font-medium transition-all rounded-lg"
+                className="block px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-800 font-medium transition-all rounded-lg"
               >
                 {link.label}
               </Link>

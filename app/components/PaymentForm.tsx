@@ -69,7 +69,7 @@ export default function PaymentForm({
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
+        className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
       >
         {isProcessing ? (
           <>

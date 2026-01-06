@@ -64,26 +64,26 @@ export default function ContactPage() {
 
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen">
       <Navigation />
 
-      <main className="pt-20">
+      <main>
         {/* Hero Section */}
-        <section className="relative py-20 bg-slate-50 dark:bg-slate-950 overflow-hidden">
+        <section className="relative py-20 lg:py-28 bg-slate-50 dark:bg-slate-950 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-size-[14px_24px] opacity-30"></div>
 
           {/* Decorative glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-150 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-150 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl"></div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-full mb-6">
-                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800/30 rounded-full mb-6">
+                <svg className="w-4 h-4 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
                   <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
                 </svg>
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Connect With Me</span>
+                <span className="text-sm font-medium text-orange-700 dark:text-orange-300">Connect With Me</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
@@ -116,20 +116,20 @@ export default function ContactPage() {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-start gap-4 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-xl hover:scale-[1.02]"
+                      className="group flex items-start gap-4 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-200 hover:shadow-xl hover:scale-[1.02]"
                     >
-                      <div className="shrink-0 w-14 h-14 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                      <div className="shrink-0 w-14 h-14 bg-orange-600 dark:bg-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                         {social.icon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-slate-900 dark:text-white mb-1">{social.name}</p>
-                        <p className="text-blue-600 dark:text-blue-400 font-medium truncate mb-1">
+                        <p className="text-orange-600 dark:text-orange-400 font-medium truncate mb-1">
                           {social.handle}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{social.subtitle}</p>
                         <p className="text-sm text-slate-600 dark:text-slate-400">{social.description}</p>
                       </div>
-                      <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all duration-200 shrink-0 mt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:translate-x-1 transition-all duration-200 shrink-0 mt-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
                     </a>
@@ -137,16 +137,16 @@ export default function ContactPage() {
                 </div>
 
                 {/* Quick Links Card */}
-                <div className="bg-linear-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 p-8 rounded-2xl border border-blue-100 dark:border-slate-700">
+                <div className="bg-linear-to-br from-orange-50 to-amber-50 dark:from-slate-800 dark:to-slate-800 p-8 rounded-2xl border border-orange-100 dark:border-slate-700">
                   <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Explore More</h3>
                   <div className="flex flex-wrap gap-3">
-                    <a href="/videos" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-blue-300 dark:hover:border-blue-600">
+                    <a href="/videos" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-orange-300 dark:hover:border-orange-600">
                       Watch Videos
                     </a>
-                    <a href="/resources" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-blue-300 dark:hover:border-blue-600">
+                    <a href="/resources" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-orange-300 dark:hover:border-orange-600">
                       Browse Resources
                     </a>
-                    <a href="/about" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-blue-300 dark:hover:border-blue-600">
+                    <a href="/about" className="px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg font-medium transition-all text-slate-900 dark:text-white hover:border-orange-300 dark:hover:border-orange-600">
                       About Me
                     </a>
                   </div>

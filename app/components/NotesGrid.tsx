@@ -31,7 +31,7 @@ export default function NotesGrid({ notes }: NotesGridProps) {
       {notes.map((note) => (
         <div
           key={note.id}
-          className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+          className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
         >
           <div className="p-6 space-y-4">
             {/* PDF Icon */}
@@ -57,7 +57,7 @@ export default function NotesGrid({ notes }: NotesGridProps) {
                 {note.topics.slice(0, 3).map((topic, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full"
+                    className="px-3 py-1 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800/30 text-orange-700 dark:text-orange-300 text-xs font-medium rounded-full"
                   >
                     {topic}
                   </span>
@@ -87,7 +87,7 @@ export default function NotesGrid({ notes }: NotesGridProps) {
                     href={`/api/pdfs/preview?key=${encodeURIComponent(note.key)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 px-4 py-2 text-center text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors text-sm font-medium"
+                    className="flex-1 px-4 py-2 text-center text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors text-sm font-medium"
                   >
                     Preview
                   </a>
@@ -97,7 +97,7 @@ export default function NotesGrid({ notes }: NotesGridProps) {
                   disabled={isInCart(note.id)}
                   className={`flex-1 px-4 py-2 rounded-xl transition-all duration-200 text-sm font-semibold ${isInCart(note.id)
                       ? 'bg-green-600 text-white cursor-not-allowed shadow-lg shadow-green-600/20'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:scale-105'
+                      : 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20 hover:shadow-xl hover:shadow-orange-600/30 hover:scale-105'
                     }`}
                 >
                   {isInCart(note.id) ? (

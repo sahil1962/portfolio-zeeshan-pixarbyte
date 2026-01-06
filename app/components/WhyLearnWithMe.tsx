@@ -48,15 +48,15 @@ export default function WhyLearnWithMe() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-size-[14px_24px] opacity-30"></div>
 
       {/* Decorative glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-blue-500/5 dark:bg-blue-500/3 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-orange-500/5 dark:bg-orange-500/3 rounded-full blur-3xl"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/30 rounded-full mb-6">
-            <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800/30 rounded-full mb-6">
+            <svg className="w-4 h-4 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm font-medium text-green-700 dark:text-green-300">Student-Focused</span>
+            <span className="text-sm font-medium text-orange-700 dark:text-orange-300">Student-Focused</span>
           </div>
 
           <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-6">
@@ -71,15 +71,15 @@ export default function WhyLearnWithMe() {
           {reasons.map((reason, index) => (
             <div
               key={index}
-              className="group relative bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+              className="group relative bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
             >
               {/* Icon */}
               <div className="flex items-start gap-5 mb-4">
-                <div className="shrink-0 w-14 h-14 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                <div className="shrink-0 w-14 h-14 bg-orange-600 dark:bg-orange-500 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
                   {reason.icon}
                 </div>
                 <div className="flex-1 pt-2">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {reason.title}
                   </h3>
                 </div>
@@ -91,14 +91,14 @@ export default function WhyLearnWithMe() {
               </p>
 
               {/* Decorative corner accent */}
-              <div className="absolute top-0 right-0 w-20 h-20 bg-linear-to-br from-blue-500/5 to-transparent dark:from-blue-500/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-0 right-0 w-20 h-20 bg-linear-to-br from-orange-500/5 to-transparent dark:from-orange-500/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>
 
         {/* Bottom CTA Card */}
         <div className="mt-16 max-w-4xl mx-auto">
-          <div className="relative bg-linear-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-8 sm:p-10 border border-blue-100 dark:border-slate-700 shadow-lg">
+          <div className="relative bg-linear-to-br from-orange-50 to-amber-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-8 sm:p-10 border border-orange-100 dark:border-slate-700 shadow-lg">
             <div className="relative z-10 text-center">
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
                 Join thousands of successful students
@@ -108,7 +108,7 @@ export default function WhyLearnWithMe() {
               </p>
               <a
                 href="/videos"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-orange-600/20 hover:shadow-xl hover:shadow-orange-600/30 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Start Learning Now</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

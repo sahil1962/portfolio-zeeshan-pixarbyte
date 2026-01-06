@@ -121,7 +121,7 @@ export default function PDFManager() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
         </div>
       </div>
     );
@@ -133,7 +133,7 @@ export default function PDFManager() {
         <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Manage PDFs</h3>
         <button
           onClick={fetchPDFs}
-          className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+          className="px-4 py-2 text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
         >
           Refresh
         </button>
@@ -180,7 +180,7 @@ export default function PDFManager() {
               <div className="flex items-center gap-2 ml-4">
                 <button
                   onClick={() => handleDownload(pdf.key)}
-                  className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors"
                 >
                   Download
                 </button>

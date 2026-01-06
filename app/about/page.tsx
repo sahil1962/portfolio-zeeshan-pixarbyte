@@ -74,29 +74,29 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen">
       <Navigation />
 
-      <main className="pt-20">
+      <main>
         {/* Hero Section */}
         <section className="relative py-20 lg:py-28 bg-slate-50 dark:bg-slate-950 overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-size-[14px_24px] opacity-30"></div>
 
           {/* Decorative glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl"></div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-full mb-6">
-                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800/30 rounded-full mb-6">
+                <svg className="w-4 h-4 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">About Me</span>
+                <span className="text-sm font-medium text-orange-700 dark:text-orange-300">About Me</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
-                Hi, I&apos;m <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Zeeshan Zamurred</span>
+                Hi, I&apos;m <span className="bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Zeeshan Zamurred</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
@@ -115,7 +115,7 @@ export default function AboutPage() {
 
               <a
                 href="/videos"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-orange-600/20 hover:shadow-xl hover:shadow-orange-600/30 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Explore My Lessons</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,12 +142,12 @@ export default function AboutPage() {
               {qualifications.map((qual, index) => (
                 <div
                   key={index}
-                  className="group bg-slate-50 dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                  className="group bg-slate-50 dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
                 >
-                  <div className="w-14 h-14 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-14 h-14 bg-orange-600 dark:bg-orange-500 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
                     {qual.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {qual.title}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -178,9 +178,9 @@ export default function AboutPage() {
               {values.map((value, index) => (
                 <div
                   key={index}
-                  className="group bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl"
+                  className="group bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 hover:shadow-xl"
                 >
-                  <div className="w-12 h-12 bg-blue-600 dark:bg-blue-500 rounded-lg flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 bg-orange-600 dark:bg-orange-500 rounded-lg flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300">
                     {value.icon}
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
@@ -198,7 +198,7 @@ export default function AboutPage() {
         {/* CTA Section */}
         <section className="py-20 bg-white dark:bg-slate-900">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="relative bg-linear-to-br from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700 rounded-2xl p-10 md:p-14 text-center text-white shadow-2xl overflow-hidden">
+            <div className="relative bg-linear-to-br from-orange-600 to-amber-600 dark:from-orange-700 dark:to-amber-700 rounded-2xl p-10 md:p-14 text-center text-white shadow-2xl overflow-hidden">
               {/* Decorative pattern overlay */}
               <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-size-[14px_24px]"></div>
 
@@ -206,13 +206,13 @@ export default function AboutPage() {
                 <h2 className="text-3xl sm:text-4xl font-bold mb-4">
                   Ready to Start Learning?
                 </h2>
-                <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+                <p className="text-lg text-orange-100 mb-8 max-w-2xl mx-auto">
                   Join 81,700+ students and start your journey to A-Level Maths success today with free video lessons and resources.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
                     href="/videos"
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                   >
                     <span>Browse Video Lessons</span>
                   </a>

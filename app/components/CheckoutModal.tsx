@@ -188,11 +188,11 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </p>
             <p className="text-slate-600 dark:text-slate-400">
               Download links have been sent to{' '}
-              <span className="font-semibold text-blue-600 dark:text-blue-400">
+              <span className="font-semibold text-orange-600 dark:text-orange-400">
                 {email}
               </span>
             </p>
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
               <p className="text-sm text-slate-700 dark:text-slate-300">
                 Please check your email inbox (and spam folder) for the download
                 links. They are valid for 7 days.
@@ -255,7 +255,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   ))}
                   <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between font-bold">
                     <span className="text-slate-900 dark:text-white">Total</span>
-                    <span className="text-blue-600 dark:text-blue-400">
+                    <span className="text-orange-600 dark:text-orange-400">
                       ${getCartTotal().toFixed(2)}
                     </span>
                   </div>
@@ -292,7 +292,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-slate-900 dark:text-white"
                       placeholder="your@email.com"
                       disabled={isLoading || retryAfter > 0}
                     />
@@ -304,7 +304,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <button
                     type="submit"
                     disabled={isLoading || retryAfter > 0 || !email}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30"
                   >
                     {isLoading ? 'Sending...' : 'Send Verification Code'}
                   </button>
@@ -317,14 +317,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <div className="text-center mb-4">
                     <p className="text-sm text-slate-600 dark:text-slate-400">
                       We sent a 6-digit code to{' '}
-                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      <span className="font-semibold text-orange-600 dark:text-orange-400">
                         {email}
                       </span>
                     </p>
                     <button
                       type="button"
                       onClick={() => setStep('email')}
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-1"
+                      className="text-sm text-orange-600 dark:text-orange-400 hover:underline mt-1"
                     >
                       Change email
                     </button>
@@ -346,7 +346,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       }
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-slate-900 dark:text-white text-center text-2xl letter-spacing-wide font-mono"
+                      className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-slate-900 dark:text-white text-center text-2xl letter-spacing-wide font-mono"
                       placeholder="000000"
                       disabled={isLoading || retryAfter > 0}
                     />
@@ -358,7 +358,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <button
                     type="submit"
                     disabled={isLoading || retryAfter > 0 || otp.length !== 6}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30"
                   >
                     {isLoading ? 'Verifying...' : 'Verify Code'}
                   </button>

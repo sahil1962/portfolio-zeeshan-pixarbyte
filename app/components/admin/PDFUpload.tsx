@@ -138,10 +138,10 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
               file:mr-4 file:py-2 file:px-4
               file:rounded-lg file:border-0
               file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100
-              dark:file:bg-blue-900/20 dark:file:text-blue-400
-              dark:hover:file:bg-blue-900/30
+              file:bg-orange-50 file:text-orange-700
+              hover:file:bg-orange-100
+              dark:file:bg-orange-900/20 dark:file:text-orange-400
+              dark:hover:file:bg-orange-900/30
               cursor-pointer"
           />
           {file && (
@@ -165,7 +165,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
-              focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </div>
@@ -184,7 +184,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
-              focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </div>
@@ -205,7 +205,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
-              focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </div>
@@ -248,7 +248,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
-              focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -272,8 +272,8 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
           type="submit"
           disabled={!file || uploading}
           className="w-full px-6 py-3 rounded-lg font-semibold text-white
-            bg-linear-to-r from-blue-600 to-indigo-600
-            hover:from-blue-700 hover:to-indigo-700
+            bg-linear-to-r from-orange-600 to-amber-600
+            hover:from-orange-700 hover:to-amber-700
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all duration-200 shadow-lg hover:shadow-xl"
         >
