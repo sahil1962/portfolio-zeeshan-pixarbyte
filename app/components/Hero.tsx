@@ -118,7 +118,7 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-white">Certified Educator</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">A-Level Specialist</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">ALevel Specialist</div>
                   </div>
                 </div>
               </div>
