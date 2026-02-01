@@ -20,7 +20,6 @@ export interface Note {
   name?: string;
   size?: number;
   uploadedAt?: string;
-  url?: string;
 }
 
 export default function NotesMarketplace() {
@@ -53,7 +52,6 @@ export default function NotesMarketplace() {
           name: string;
           size: number;
           uploadedAt: string;
-          url: string;
           title?: string;
           description?: string;
           price?: string;
@@ -66,7 +64,7 @@ export default function NotesMarketplace() {
           topics: pdf.topics ? pdf.topics.split(',').map(t => t.trim()) : [],
           pages: parseInt(pdf.pages || '0'),
           price: parseFloat(pdf.price || '0'),
-          preview: pdf.url,
+          preview: `/api/pdfs/preview?key=${encodeURIComponent(pdf.key)}`,
           rating: 0,
           reviews: 0,
           // Keep R2 fields
@@ -74,7 +72,6 @@ export default function NotesMarketplace() {
           name: pdf.name,
           size: pdf.size,
           uploadedAt: pdf.uploadedAt,
-          url: pdf.url
         }));
         setNotes(transformedNotes);
       } else {

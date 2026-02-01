@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const { email, cartTotal, items } = await request.json();
 
     // Validation
-    if (!email || !cartTotal || !items || items.length === 0) {
+    if (!email || cartTotal === undefined || cartTotal === null || !items || items.length === 0) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

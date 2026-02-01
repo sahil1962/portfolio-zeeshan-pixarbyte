@@ -16,6 +16,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // TODO: Add authentication and payment verification
+    // Example implementation:
+    //
+    // 1. Check if user is authenticated
+    // const session = await getServerSession();
+    // if (!session) {
+    //   return NextResponse.json(
+    //     { error: 'Authentication required' },
+    //     { status: 401 }
+    //   );
+    // }
+    //
+    // 2. Verify user has purchased this PDF
+    // const hasPurchased = await checkUserPurchase(session.user.id, key);
+    // if (!hasPurchased) {
+    //   return NextResponse.json(
+    //     { error: 'Payment required for this PDF' },
+    //     { status: 403 }
+    //   );
+    // }
+
     // Generate presigned URL (expires in 1 hour)
     const downloadUrl = await getPresignedDownloadUrl(key);
 

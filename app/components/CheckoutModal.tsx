@@ -130,8 +130,15 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       } else if (!response.ok) {
         setError(data.error || 'Verification failed');
       } else {
-        setClientSecret(data.clientSecret);
-        setStep('payment');
+        // Handle free items
+        if (data.isFree) {
+          // Skip payment step and go directly to success
+          handlePaymentSuccess();
+        } else {
+          // Handle paid items - proceed to Stripe payment
+          setClientSecret(data.clientSecret);
+          setStep('payment');
+        }
       }
     } catch {
       setError('Network error. Please try again.');
@@ -140,14 +147,15 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }
   };
 
+  // Track the cart total before clearing (for success screen display)
+  const [finalTotal, setFinalTotal] = useState(0);
+
   // Step 3: Payment success callback
   const handlePaymentSuccess = () => {
+    setFinalTotal(getCartTotal()); // Save total before clearing cart
     setStep('success');
-    // Clear cart and close modal after 4 seconds
-    setTimeout(() => {
-      clearCart();
-      onClose();
-    }, 4000);
+    clearCart();
+    // Don't auto-close - let user close manually
   };
 
   // Step 3: Payment error callback
@@ -161,10 +169,30 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
         {/* Success Step */}
         {step === 'success' && (
           <div className="p-8 text-center">
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="absolute top-6 right-6 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
                 className="w-10 h-10 text-green-600 dark:text-green-400"
@@ -181,10 +209,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-              Payment Successful!
+              {finalTotal === 0 ? 'Download Links Sent!' : 'Payment Successful!'}
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-2">
-              Your purchase has been completed successfully.
+              {finalTotal === 0
+                ? 'Your free notes are ready!'
+                : 'Your purchase has been completed successfully.'}
             </p>
             <p className="text-slate-600 dark:text-slate-400">
               Download links have been sent to{' '}
@@ -198,6 +228,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 links. They are valid for 7 days.
               </p>
             </div>
+
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="mt-8 w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30"
+            >
+              Close
+            </button>
           </div>
         )}
 

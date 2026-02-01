@@ -54,13 +54,25 @@ export async function POST(request: NextRequest) {
     const pages = formData.get('pages') as string || '0';
     const topics = formData.get('topics') as string || '';
 
+    // Sanitize metadata for HTTP headers
+    // R2 metadata is stored in HTTP headers which have strict limitations:
+    // - No newlines, carriage returns, or control characters
+    // - Limited length (AWS recommends < 2KB per metadata field)
+    const sanitizeMetadata = (value: string, maxLength: number = 2000): string => {
+      return value
+        .replace(/[\r\n\t]/g, ' ') // Replace newlines and tabs with spaces
+        .replace(/[^\x20-\x7E]/g, '') // Remove non-printable ASCII characters
+        .trim()
+        .substring(0, maxLength); // Limit length
+    };
+
     // Upload to R2
     const metadata = await uploadPDF(buffer, file.name, {
-      title,
-      description,
-      price,
-      pages,
-      topics,
+      title: sanitizeMetadata(title, 200),
+      description: sanitizeMetadata(description, 500),
+      price: sanitizeMetadata(price, 20),
+      pages: sanitizeMetadata(pages, 10),
+      topics: sanitizeMetadata(topics, 500),
     });
 
     return NextResponse.json({

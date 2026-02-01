@@ -162,24 +162,29 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter PDF title"
+            maxLength={200}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
               focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            {title.length}/200 characters
+          </p>
         </div>
 
         {/* Description */}
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Description *
+            Short Description *
           </label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter PDF description"
+            placeholder="Enter PDF's short description"
+            maxLength={500}
             rows={3}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
@@ -187,6 +192,9 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
               focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            {description.length}/500 characters
+          </p>
         </div>
 
         {/* Price */}
@@ -245,6 +253,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             value={topics}
             onChange={(e) => setTopics(e.target.value)}
             placeholder="e.g., Group Theory, Ring Theory, Field Extensions"
+            maxLength={500}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
               bg-white dark:bg-slate-700 text-slate-900 dark:text-white
@@ -252,7 +261,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Enter topics separated by commas
+            {topics.length}/500 characters - Enter topics separated by commas
           </p>
         </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 
 interface Note {
   id: string;
@@ -56,10 +56,27 @@ function loadCartFromStorage(): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const initialLoadDone = useRef(false);
+
+  // Load cart from localStorage on mount (client-side only)
+  useEffect(() => {
+    if (!initialLoadDone.current) {
+      initialLoadDone.current = true;
+      const storedCart = loadCartFromStorage();
+      if (storedCart.length > 0) {
+        // Use callback to update state from external system (localStorage)
+        requestAnimationFrame(() => {
+          setCart(storedCart);
+        });
+      }
+    }
+  }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
+    if (!initialLoadDone.current) return;
+
     try {
       if (cart.length > 0) {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));

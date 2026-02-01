@@ -8,7 +8,11 @@ interface PDF {
   name: string;
   size: number;
   uploadedAt: string;
-  url: string;
+  title?: string;
+  description?: string;
+  price?: string;
+  pages?: string;
+  topics?: string;
 }
 
 export default function PDFManager() {
@@ -185,11 +189,11 @@ export default function PDFManager() {
                   Download
                 </button>
                 <button
-                  onClick={() => navigator.clipboard.writeText(pdf.url)}
+                  onClick={() => navigator.clipboard.writeText(pdf.key)}
                   className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg transition-colors"
-                  title="Copy URL"
+                  title="Copy Key"
                 >
-                  Copy URL
+                  Copy Key
                 </button>
                 <button
                   onClick={() => handleDelete(pdf.key)}

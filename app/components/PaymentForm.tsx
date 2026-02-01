@@ -34,7 +34,7 @@ export default function PaymentForm({
     setIsProcessing(true);
 
     try {
-      const { error } = await stripe.confirmPayment({
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/purchase-complete`,
@@ -45,7 +45,19 @@ export default function PaymentForm({
 
       if (error) {
         onError(error.message || 'Payment failed');
-      } else {
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // Send email with download links (for development mode)
+        // In production, the webhook handles this
+        try {
+          await fetch('/api/checkout/payment-success', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError);
+          // Don't fail the payment if email fails
+        }
         onSuccess();
       }
     } catch {
@@ -99,16 +111,6 @@ export default function PaymentForm({
         )}
       </button>
 
-      <div className="flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <span>Secure payment powered by Stripe</span>
-      </div>
     </form>
   );
 }

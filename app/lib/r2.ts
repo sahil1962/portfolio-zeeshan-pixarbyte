@@ -6,12 +6,15 @@ export interface PDFMetadata {
   name: string;
   size: number;
   uploadedAt: Date;
-  url: string;
   title?: string;
   description?: string;
   price?: string;
   pages?: string;
   topics?: string;
+}
+
+export interface PDFMetadataWithUrl extends PDFMetadata {
+  url: string;
 }
 
 // Helper to get S3 client with dynamic import
@@ -52,12 +55,11 @@ export async function uploadPDF(file: Buffer, fileName: string, metadata?: Recor
     name: fileName,
     size: file.length,
     uploadedAt: new Date(),
-    url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`,
   };
 }
 
 /**
- * List all PDFs in the bucket with metadata
+ * List all PDFs in the bucket with metadata (without URLs for security)
  */
 export async function listPDFs(): Promise<PDFMetadata[]> {
   const { ListObjectsV2Command, HeadObjectCommand } = await import('@aws-sdk/client-s3');
@@ -92,7 +94,6 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
           name: item.Key?.split('/').pop() || item.Key || '',
           size: item.Size || 0,
           uploadedAt: item.LastModified || new Date(),
-          url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
           // Include metadata from upload
           title: headResponse.Metadata?.title,
           description: headResponse.Metadata?.description,
@@ -108,7 +109,6 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
           name: item.Key?.split('/').pop() || item.Key || '',
           size: item.Size || 0,
           uploadedAt: item.LastModified || new Date(),
-          url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
         };
       }
     })
