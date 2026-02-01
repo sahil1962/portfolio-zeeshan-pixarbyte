@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadFile, SUPPORTED_FILE_TYPES } from '@/app/lib/r2';
+import { verifyAuth } from '@/lib/auth';
 
 // Force Node.js runtime to avoid Turbopack bundling issues
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
+    // Require admin authentication
+    const auth = await verifyAuth();
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: 'Admin authentication required' },
+        { status: 401 }
+      );
+    }
+
     // Verify environment variables are set
     if (!process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID ||
         !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_BUCKET_NAME) {

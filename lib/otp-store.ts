@@ -27,11 +27,11 @@ class OTPStore {
 
   /**
    * Create a new OTP for the given email and cart hash
-   * Returns the generated 6-digit OTP
+   * Returns the generated 8-digit OTP (100 million combinations vs 1 million for 6 digits)
    */
   create(email: string, cartHash: string): string {
-    // Generate cryptographically secure 6-digit OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
+    // Generate cryptographically secure 8-digit OTP (10000000 to 99999999)
+    const otp = crypto.randomInt(10000000, 99999999).toString();
     const now = Date.now();
 
     this.store.set(email.toLowerCase(), {
@@ -95,8 +95,13 @@ class OTPStore {
     // Increment attempt counter
     entry.attempts++;
 
-    // Verify the OTP
-    if (entry.otp !== otp) {
+    // Verify the OTP using constant-time comparison (prevents timing attacks)
+    // Pad both strings to same length to ensure timingSafeEqual works correctly
+    const otpBuffer = Buffer.from(otp.padStart(8, '0'));
+    const storedBuffer = Buffer.from(entry.otp.padStart(8, '0'));
+    const isValid = crypto.timingSafeEqual(otpBuffer, storedBuffer);
+
+    if (!isValid) {
       return { success: false, error: 'Invalid OTP' };
     }
 

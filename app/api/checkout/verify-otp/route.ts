@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import otpStore from '@/lib/otp-store';
 import rateLimiter, { getRateLimitIdentifier } from '@/lib/rate-limiter';
 import Stripe from 'stripe';
+import { listPDFs } from '@/app/lib/r2';
 
 // Check if Stripe key is configured
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -50,6 +51,33 @@ export async function POST(request: NextRequest) {
 
     if (!verification.success) {
       return NextResponse.json({ error: verification.error }, { status: 400 });
+    }
+
+    // Server-side price validation - NEVER trust client prices
+    const serverPDFs = await listPDFs();
+    const priceMap = new Map(serverPDFs.map(pdf => [pdf.key, parseFloat(pdf.price || '0')]));
+
+    // Recalculate total from server prices
+    let serverTotal = 0;
+    for (const item of items) {
+      const itemKey = item.key || item.id;
+      const serverPrice = priceMap.get(itemKey);
+      if (serverPrice === undefined) {
+        return NextResponse.json(
+          { error: `Product not found: ${item.title}` },
+          { status: 400 }
+        );
+      }
+      serverTotal += serverPrice;
+    }
+
+    // Allow small floating point differences (0.01)
+    if (Math.abs(serverTotal - total) > 0.01) {
+      console.warn(`Price mismatch detected: client=${total}, server=${serverTotal}`);
+      return NextResponse.json(
+        { error: 'Price mismatch detected. Please refresh and try again.' },
+        { status: 400 }
+      );
     }
 
     // Handle free items (total = 0)

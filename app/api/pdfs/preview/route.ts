@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PDFDocument, degrees } from 'pdf-lib';
-import { SUPPORTED_EXTENSIONS } from '@/app/lib/r2';
+import { SUPPORTED_EXTENSIONS, listPDFs } from '@/app/lib/r2';
 
 // Force Node.js runtime
 export const runtime = 'nodejs';
@@ -21,6 +21,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'File key is required' },
         { status: 400 }
+      );
+    }
+
+    // SECURITY: Validate key against actual R2 files (prevents path traversal)
+    // Only allow keys that exist in our file listing
+    const validFiles = await listPDFs();
+    const isValidKey = validFiles.some(file => file.key === key);
+    if (!isValidKey) {
+      return NextResponse.json(
+        { success: false, error: 'File not found' },
+        { status: 404 }
       );
     }
 

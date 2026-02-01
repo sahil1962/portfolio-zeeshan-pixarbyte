@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deletePDF } from '@/app/lib/r2';
+import { verifyAuth } from '@/lib/auth';
 
 // Force Node.js runtime to avoid Turbopack bundling issues
 export const runtime = 'nodejs';
 
 export async function DELETE(request: NextRequest) {
   try {
+    // Require admin authentication
+    const auth = await verifyAuth();
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: 'Admin authentication required' },
+        { status: 401 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const key = searchParams.get('key');
 
