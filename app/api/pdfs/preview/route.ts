@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PDFDocument, degrees } from 'pdf-lib';
+import { SUPPORTED_EXTENSIONS } from '@/app/lib/r2';
 
 // Force Node.js runtime
 export const runtime = 'nodejs';
 
 const PREVIEW_PAGES = 2; // Number of pages to show in preview
+
+// Check if file is a PDF based on key/extension
+function isPdfFile(key: string): boolean {
+  return key.toLowerCase().endsWith('.pdf');
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +19,28 @@ export async function GET(request: NextRequest) {
 
     if (!key) {
       return NextResponse.json(
-        { success: false, error: 'PDF key is required' },
+        { success: false, error: 'File key is required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if file extension is supported
+    const fileExt = '.' + key.split('.').pop()?.toLowerCase();
+    if (!SUPPORTED_EXTENSIONS.includes(fileExt)) {
+      return NextResponse.json(
+        { success: false, error: 'Unsupported file type' },
+        { status: 400 }
+      );
+    }
+
+    // For non-PDF files, return a message that preview isn't available
+    if (!isPdfFile(key)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Preview not available for this file type. Please purchase to download.',
+          fileType: fileExt
+        },
         { status: 400 }
       );
     }
@@ -47,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     if (!response.Body) {
       return NextResponse.json(
-        { success: false, error: 'PDF not found' },
+        { success: false, error: 'File not found' },
         { status: 404 }
       );
     }

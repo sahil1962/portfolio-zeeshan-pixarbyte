@@ -1,7 +1,20 @@
 // Dynamic imports to work with Turbopack on Windows
 const BUCKET_NAME = process.env.R2_BUCKET_NAME || '';
 
-export interface PDFMetadata {
+// Supported file types for upload
+export const SUPPORTED_FILE_TYPES: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'application/vnd.ms-powerpoint': '.ppt',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+  'application/msword': '.doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+  'application/vnd.ms-excel': '.xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+};
+
+export const SUPPORTED_EXTENSIONS = ['.pdf', '.ppt', '.pptx', '.doc', '.docx', '.xls', '.xlsx'];
+
+export interface FileMetadata {
   key: string;
   name: string;
   size: number;
@@ -11,11 +24,16 @@ export interface PDFMetadata {
   price?: string;
   pages?: string;
   topics?: string;
+  fileType?: string;
 }
 
-export interface PDFMetadataWithUrl extends PDFMetadata {
+export interface FileMetadataWithUrl extends FileMetadata {
   url: string;
 }
+
+// Keep old names for backwards compatibility
+export type PDFMetadata = FileMetadata;
+export type PDFMetadataWithUrl = FileMetadataWithUrl;
 
 // Helper to get S3 client with dynamic import
 async function getS3Client() {
@@ -32,20 +50,25 @@ async function getS3Client() {
 }
 
 /**
- * Upload a PDF file to R2 bucket
+ * Upload a file to R2 bucket (supports PDFs, PowerPoints, Word docs, Excel)
  */
-export async function uploadPDF(file: Buffer, fileName: string, metadata?: Record<string, string>): Promise<PDFMetadata> {
+export async function uploadFile(
+  file: Buffer,
+  fileName: string,
+  contentType: string,
+  metadata?: Record<string, string>
+): Promise<FileMetadata> {
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
 
-  const key = `pdfs/${Date.now()}-${fileName}`;
+  const key = `files/${Date.now()}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
     Key: key,
     Body: file,
-    ContentType: 'application/pdf',
-    Metadata: metadata,
+    ContentType: contentType,
+    Metadata: { ...metadata, fileType: contentType },
   });
 
   await client.send(command);
@@ -55,13 +78,25 @@ export async function uploadPDF(file: Buffer, fileName: string, metadata?: Recor
     name: fileName,
     size: file.length,
     uploadedAt: new Date(),
+    fileType: contentType,
   };
 }
 
 /**
- * List all PDFs in the bucket with metadata (without URLs for security)
+ * Upload a PDF file to R2 bucket (legacy function for backwards compatibility)
  */
-export async function listPDFs(): Promise<PDFMetadata[]> {
+export async function uploadPDF(
+  file: Buffer,
+  fileName: string,
+  metadata?: Record<string, string>
+): Promise<FileMetadata> {
+  return uploadFile(file, fileName, 'application/pdf', metadata);
+}
+
+/**
+ * List all files in the bucket with metadata (without URLs for security)
+ */
+export async function listFiles(): Promise<FileMetadata[]> {
   const { ListObjectsV2Command, HeadObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
 
@@ -75,12 +110,15 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
     return [];
   }
 
-  // Filter to only include PDF files
-  const pdfItems = response.Contents.filter(item => item.Key?.toLowerCase().endsWith('.pdf'));
+  // Filter to only include supported file types
+  const supportedItems = response.Contents.filter(item => {
+    const key = item.Key?.toLowerCase() || '';
+    return SUPPORTED_EXTENSIONS.some(ext => key.endsWith(ext));
+  });
 
-  // Fetch metadata for each PDF
-  const pdfsWithMetadata = await Promise.all(
-    pdfItems.map(async (item) => {
+  // Fetch metadata for each file
+  const filesWithMetadata = await Promise.all(
+    supportedItems.map(async (item) => {
       try {
         // Get metadata for this file
         const headCommand = new HeadObjectCommand({
@@ -100,6 +138,7 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
           price: headResponse.Metadata?.price,
           pages: headResponse.Metadata?.pages,
           topics: headResponse.Metadata?.topics,
+          fileType: headResponse.Metadata?.filetype || headResponse.ContentType,
         };
       } catch (error) {
         console.error(`Error fetching metadata for ${item.Key}:`, error);
@@ -114,7 +153,14 @@ export async function listPDFs(): Promise<PDFMetadata[]> {
     })
   );
 
-  return pdfsWithMetadata;
+  return filesWithMetadata;
+}
+
+/**
+ * List all PDFs in the bucket (legacy function for backwards compatibility)
+ */
+export async function listPDFs(): Promise<FileMetadata[]> {
+  return listFiles();
 }
 
 /**
@@ -139,9 +185,9 @@ export async function getPresignedDownloadUrl(
 }
 
 /**
- * Delete a PDF from the bucket
+ * Delete a file from the bucket
  */
-export async function deletePDF(key: string): Promise<void> {
+export async function deleteFile(key: string): Promise<void> {
   const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await getS3Client();
 
@@ -151,4 +197,11 @@ export async function deletePDF(key: string): Promise<void> {
   });
 
   await client.send(command);
+}
+
+/**
+ * Delete a PDF from the bucket (legacy function for backwards compatibility)
+ */
+export async function deletePDF(key: string): Promise<void> {
+  return deleteFile(key);
 }

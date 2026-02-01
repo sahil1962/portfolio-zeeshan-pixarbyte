@@ -47,7 +47,7 @@ export default function NotesMarketplace() {
 
       if (data.success && data.data) {
         // Transform R2 data to Note format
-        const transformedNotes: Note[] = data.data.map((pdf: {
+        const transformedNotes: Note[] = data.data.map((file: {
           key: string;
           name: string;
           size: number;
@@ -58,20 +58,21 @@ export default function NotesMarketplace() {
           pages?: string;
           topics?: string;
         }) => ({
-          id: pdf.key,
-          title: pdf.title || pdf.name.replace('.pdf', ''),
-          description: pdf.description || 'Premium study notes and educational material',
-          topics: pdf.topics ? pdf.topics.split(',').map(t => t.trim()) : [],
-          pages: parseInt(pdf.pages || '0'),
-          price: parseFloat(pdf.price || '0'),
-          preview: `/api/pdfs/preview?key=${encodeURIComponent(pdf.key)}`,
+          id: file.key,
+          // Remove file extension from name for title fallback
+          title: file.title || file.name.replace(/\.[^/.]+$/, ''),
+          description: file.description || 'Premium study notes and educational material',
+          topics: file.topics ? file.topics.split(',').map(t => t.trim()) : [],
+          pages: parseInt(file.pages || '0'),
+          price: parseFloat(file.price || '0'),
+          preview: `/api/pdfs/preview?key=${encodeURIComponent(file.key)}`,
           rating: 0,
           reviews: 0,
           // Keep R2 fields
-          key: pdf.key,
-          name: pdf.name,
-          size: pdf.size,
-          uploadedAt: pdf.uploadedAt,
+          key: file.key,
+          name: file.name,
+          size: file.size,
+          uploadedAt: file.uploadedAt,
         }));
         setNotes(transformedNotes);
       } else {

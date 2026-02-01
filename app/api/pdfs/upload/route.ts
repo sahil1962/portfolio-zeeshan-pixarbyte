@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadPDF } from '@/app/lib/r2';
+import { uploadFile, SUPPORTED_FILE_TYPES } from '@/app/lib/r2';
 
 // Force Node.js runtime to avoid Turbopack bundling issues
 export const runtime = 'nodejs';
@@ -27,9 +27,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (file.type !== 'application/pdf') {
+    if (!SUPPORTED_FILE_TYPES[file.type]) {
+      const supportedTypes = Object.values(SUPPORTED_FILE_TYPES).join(', ');
       return NextResponse.json(
-        { success: false, error: 'Only PDF files are allowed' },
+        { success: false, error: `Unsupported file type. Allowed: ${supportedTypes}` },
         { status: 400 }
       );
     }
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Upload to R2
-    const metadata = await uploadPDF(buffer, file.name, {
+    const metadata = await uploadFile(buffer, file.name, file.type, {
       title: sanitizeMetadata(title, 200),
       description: sanitizeMetadata(description, 500),
       price: sanitizeMetadata(price, 20),

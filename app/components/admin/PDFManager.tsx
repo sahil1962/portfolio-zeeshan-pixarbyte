@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-interface PDF {
+interface FileResource {
   key: string;
   name: string;
   size: number;
@@ -13,15 +13,16 @@ interface PDF {
   price?: string;
   pages?: string;
   topics?: string;
+  fileType?: string;
 }
 
 export default function PDFManager() {
-  const [pdfs, setPdfs] = useState<PDF[]>([]);
+  const [files, setFiles] = useState<FileResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const hasFetchedRef = useRef(false);
 
-  const fetchPDFs = async () => {
+  const fetchFiles = async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/pdfs/list');
@@ -33,10 +34,10 @@ export default function PDFManager() {
       const result = await response.json();
 
       if (result.success) {
-        setPdfs(result.data);
+        setFiles(result.data);
       }
     } catch (error) {
-      console.error('Failed to fetch PDFs:', error);
+      console.error('Failed to fetch files:', error);
     } finally {
       setLoading(false);
     }
@@ -47,11 +48,11 @@ export default function PDFManager() {
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
 
-    fetchPDFs();
+    fetchFiles();
   }, []);
 
   const handleDelete = async (key: string) => {
-    if (!confirm('Are you sure you want to delete this PDF?')) {
+    if (!confirm('Are you sure you want to delete this file?')) {
       return;
     }
 
@@ -69,13 +70,13 @@ export default function PDFManager() {
 
       if (result.success) {
         // Refresh the list
-        fetchPDFs();
+        fetchFiles();
       } else {
-        alert('Failed to delete PDF');
+        alert('Failed to delete file');
       }
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete PDF');
+      alert('Failed to delete file');
     } finally {
       setDeleting(null);
     }
@@ -99,7 +100,24 @@ export default function PDFManager() {
       }
     } catch (error) {
       console.error('Download error:', error);
-      alert('Failed to download PDF');
+      alert('Failed to download file');
+    }
+  };
+
+  const getFileTypeIcon = (name: string) => {
+    const ext = name.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'ppt':
+      case 'pptx':
+        return 'PPT';
+      case 'doc':
+      case 'docx':
+        return 'DOC';
+      case 'xls':
+      case 'xlsx':
+        return 'XLS';
+      default:
+        return 'PDF';
     }
   };
 
@@ -134,16 +152,16 @@ export default function PDFManager() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Manage PDFs</h3>
+        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Manage Resources</h3>
         <button
-          onClick={fetchPDFs}
+          onClick={fetchFiles}
           className="px-4 py-2 text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
         >
           Refresh
         </button>
       </div>
 
-      {pdfs.length === 0 ? (
+      {files.length === 0 ? (
         <div className="text-center py-12">
           <svg
             className="mx-auto h-12 w-12 text-slate-400"
@@ -158,49 +176,54 @@ export default function PDFManager() {
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-white">No PDFs</h3>
+          <h3 className="mt-2 text-sm font-medium text-slate-900 dark:text-white">No Resources</h3>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Upload your first PDF to get started.
+            Upload your first file to get started.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-          {pdfs.map((pdf) => (
+          {files.map((file) => (
             <div
-              key={pdf.key}
+              key={file.key}
               className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600 hover:shadow-md transition-shadow"
             >
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                  {pdf.name}
-                </h4>
-                <div className="mt-1 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-                  <span>{formatBytes(pdf.size)}</span>
-                  <span>•</span>
-                  <span>{formatDate(pdf.uploadedAt)}</span>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <span className="px-2 py-1 text-xs font-bold rounded bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400">
+                  {getFileTypeIcon(file.name)}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                    {file.name}
+                  </h4>
+                  <div className="mt-1 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                    <span>{formatBytes(file.size)}</span>
+                    <span>•</span>
+                    <span>{formatDate(file.uploadedAt)}</span>
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 ml-4">
                 <button
-                  onClick={() => handleDownload(pdf.key)}
+                  onClick={() => handleDownload(file.key)}
                   className="px-3 py-1.5 text-sm font-medium text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors"
                 >
                   Download
                 </button>
                 <button
-                  onClick={() => navigator.clipboard.writeText(pdf.key)}
+                  onClick={() => navigator.clipboard.writeText(file.key)}
                   className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg transition-colors"
                   title="Copy Key"
                 >
                   Copy Key
                 </button>
                 <button
-                  onClick={() => handleDelete(pdf.key)}
-                  disabled={deleting === pdf.key}
+                  onClick={() => handleDelete(file.key)}
+                  disabled={deleting === file.key}
                   className="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  {deleting === pdf.key ? 'Deleting...' : 'Delete'}
+                  {deleting === file.key ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

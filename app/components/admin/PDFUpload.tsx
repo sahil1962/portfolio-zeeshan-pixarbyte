@@ -2,6 +2,19 @@
 
 import { useState } from 'react';
 
+// Supported file types matching the server-side validation
+const SUPPORTED_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
+
+const SUPPORTED_EXTENSIONS = '.pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx';
+
 interface UploadResponse {
   success: boolean;
   data?: {
@@ -26,8 +39,8 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.type !== 'application/pdf') {
-        setMessage({ type: 'error', text: 'Please select a PDF file' });
+      if (!SUPPORTED_MIME_TYPES.includes(selectedFile.type)) {
+        setMessage({ type: 'error', text: 'Please select a supported file (PDF, PPT, PPTX, DOC, DOCX, XLS, XLSX)' });
         return;
       }
       if (selectedFile.size > 50 * 1024 * 1024) {
@@ -36,21 +49,28 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
       }
       setFile(selectedFile);
       setMessage(null);
-      // Auto-fill title from filename if empty
+
+      // Auto-fill title from filename if empty (remove extension)
       if (!title) {
-        setTitle(selectedFile.name.replace('.pdf', ''));
+        const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, '');
+        setTitle(nameWithoutExt);
       }
 
-      // Auto-detect page count using pdf-lib
-      try {
-        const { PDFDocument } = await import('pdf-lib');
-        const arrayBuffer = await selectedFile.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
-        const pageCount = pdfDoc.getPageCount();
-        setPages(pageCount.toString());
-      } catch (error) {
-        console.error('Error reading PDF:', error);
-        setMessage({ type: 'error', text: 'Could not read PDF page count. Please enter manually.' });
+      // Auto-detect page count for PDFs only
+      if (selectedFile.type === 'application/pdf') {
+        try {
+          const { PDFDocument } = await import('pdf-lib');
+          const arrayBuffer = await selectedFile.arrayBuffer();
+          const pdfDoc = await PDFDocument.load(arrayBuffer);
+          const pageCount = pdfDoc.getPageCount();
+          setPages(pageCount.toString());
+        } catch (error) {
+          console.error('Error reading PDF:', error);
+          setPages('');
+        }
+      } else {
+        // For non-PDF files, clear the pages field (user can enter manually if needed)
+        setPages('');
       }
     }
   };
@@ -91,7 +111,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
       const result: UploadResponse = await response.json();
 
       if (result.success) {
-        setMessage({ type: 'success', text: 'PDF uploaded successfully!' });
+        setMessage({ type: 'success', text: 'File uploaded successfully!' });
         // Reset form
         setFile(null);
         setTitle('');
@@ -100,10 +120,10 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
         setPages('');
         setTopics('');
         // Reset file input
-        const fileInput = document.getElementById('pdf-file') as HTMLInputElement;
+        const fileInput = document.getElementById('file-input') as HTMLInputElement;
         if (fileInput) fileInput.value = '';
 
-        // Callback to refresh PDF list
+        // Callback to refresh file list
         if (onUploadSuccess) {
           onUploadSuccess();
         }
@@ -112,7 +132,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
       }
     } catch (error) {
       console.error('Upload error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to upload PDF';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
       setMessage({ type: 'error', text: errorMessage });
     } finally {
       setUploading(false);
@@ -121,18 +141,18 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
-      <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Upload PDF</h3>
+      <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Upload Resource</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* File Input */}
         <div>
-          <label htmlFor="pdf-file" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            PDF File *
+          <label htmlFor="file-input" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            File *
           </label>
           <input
-            id="pdf-file"
+            id="file-input"
             type="file"
-            accept=".pdf"
+            accept={SUPPORTED_EXTENSIONS}
             onChange={handleFileChange}
             className="block w-full text-sm text-slate-500 dark:text-slate-400
               file:mr-4 file:py-2 file:px-4
@@ -144,6 +164,9 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
               dark:hover:file:bg-orange-900/30
               cursor-pointer"
           />
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Supported: PDF, PPT, PPTX, DOC, DOCX, XLS, XLSX (max 50MB)
+          </p>
           {file && (
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
@@ -161,7 +184,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter PDF title"
+            placeholder="Enter resource title"
             maxLength={200}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
@@ -183,7 +206,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter PDF's short description"
+            placeholder="Enter a short description"
             maxLength={500}
             rows={3}
             required
@@ -218,10 +241,10 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
           />
         </div>
 
-        {/* Pages */}
+        {/* Pages/Slides */}
         <div>
           <label htmlFor="pages" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Number of Pages *
+            Number of Pages/Slides *
           </label>
           <input
             id="pages"
@@ -229,16 +252,15 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             min="1"
             value={pages}
             onChange={(e) => setPages(e.target.value)}
-            placeholder="Auto-detected from PDF"
+            placeholder="Enter page/slide count"
             required
-            readOnly
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600
-              bg-slate-100 dark:bg-slate-600 text-slate-900 dark:text-white
-              cursor-not-allowed
+              bg-white dark:bg-slate-700 text-slate-900 dark:text-white
+              focus:ring-2 focus:ring-orange-500 focus:border-transparent
               placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Page count is automatically detected when you select a PDF
+            Auto-detected for PDFs, enter manually for other file types
           </p>
         </div>
 
@@ -286,7 +308,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all duration-200 shadow-lg hover:shadow-xl"
         >
-          {uploading ? 'Uploading...' : 'Upload PDF'}
+          {uploading ? 'Uploading...' : 'Upload Resource'}
         </button>
       </form>
     </div>

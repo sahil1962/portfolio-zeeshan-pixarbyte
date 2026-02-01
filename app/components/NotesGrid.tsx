@@ -9,6 +9,26 @@ interface NotesGridProps {
   notes: Note[];
 }
 
+// Get file type info based on the file key/name
+function getFileTypeInfo(key: string | undefined): { icon: string; label: string; color: string; isPdf: boolean } {
+  if (!key) return { icon: 'PDF', label: 'PDF', color: 'red', isPdf: true };
+
+  const ext = key.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'ppt':
+    case 'pptx':
+      return { icon: 'PPT', label: 'PowerPoint', color: 'orange', isPdf: false };
+    case 'doc':
+    case 'docx':
+      return { icon: 'DOC', label: 'Word', color: 'blue', isPdf: false };
+    case 'xls':
+    case 'xlsx':
+      return { icon: 'XLS', label: 'Excel', color: 'green', isPdf: false };
+    default:
+      return { icon: 'PDF', label: 'PDF', color: 'red', isPdf: true };
+  }
+}
+
 export default function NotesGrid({ notes }: NotesGridProps) {
   const { addToCart, isInCart } = useCart();
 
@@ -34,14 +54,23 @@ export default function NotesGrid({ notes }: NotesGridProps) {
           className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
         >
           <div className="p-6 space-y-4">
-            {/* PDF Icon */}
-            <div className="flex items-center justify-start mb-4">
-              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
+            {/* File Type Icon */}
+            {(() => {
+              const fileInfo = getFileTypeInfo(note.key);
+              const colorClasses = {
+                red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+                orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
+                blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
+                green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
+              };
+              return (
+                <div className="flex items-center justify-start mb-4">
+                  <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${colorClasses[fileInfo.color as keyof typeof colorClasses]}`}>
+                    <span className="text-lg font-bold">{fileInfo.icon}</span>
+                  </div>
+                </div>
+              );
+            })()}
 
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
@@ -82,7 +111,7 @@ export default function NotesGrid({ notes }: NotesGridProps) {
                 </span>
               </div>
               <div className="flex gap-2">
-                {note.key && (
+                {note.key && getFileTypeInfo(note.key).isPdf && (
                   <a
                     href={`/api/pdfs/preview?key=${encodeURIComponent(note.key)}`}
                     target="_blank"
