@@ -57,29 +57,13 @@ class OTPStore {
     cartHash: string
   ): { success: boolean; error?: string } {
     const normalizedEmail = email.toLowerCase();
-    console.log('🔍 OTP Verify Debug:', {
-      lookupEmail: normalizedEmail,
-      providedOTP: otp,
-      providedCartHash: cartHash,
-      storeSize: this.store.size,
-      storeKeys: Array.from(this.store.keys()),
-    });
 
     const entry = this.store.get(normalizedEmail);
 
     if (!entry) {
-      console.log('❌ OTP not found for email:', normalizedEmail);
       return { success: false, error: 'OTP not found or expired' };
     }
-
-    console.log('✅ OTP entry found:', {
-      storedOTP: entry.otp,
-      storedCartHash: entry.cartHash,
-      expiresAt: new Date(entry.expiresAt).toISOString(),
-      attempts: entry.attempts,
-      verified: entry.verified,
-    });
-
+    
     // Check if OTP has expired
     if (Date.now() > entry.expiresAt) {
       this.store.delete(email.toLowerCase());
@@ -167,7 +151,17 @@ class OTPStore {
   }
 }
 
-// Singleton instance
-const otpStore = new OTPStore();
+// Use globalThis to persist the store across hot reloads in development
+// Without this, Next.js dev mode creates new instances on each request
+const globalForOtp = globalThis as unknown as {
+  otpStore: OTPStore | undefined;
+};
+
+const otpStore = globalForOtp.otpStore ?? new OTPStore();
+
+// Only cache in development to survive hot reloads
+if (process.env.NODE_ENV !== 'production') {
+  globalForOtp.otpStore = otpStore;
+}
 
 export default otpStore;

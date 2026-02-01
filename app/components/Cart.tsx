@@ -9,7 +9,8 @@ export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
 
-  if (getCartCount() === 0 && !isOpen) {
+  // Don't hide the component if checkout modal is open (for success screen)
+  if (getCartCount() === 0 && !isOpen && !showCheckout) {
     return null;
   }
 

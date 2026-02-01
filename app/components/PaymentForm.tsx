@@ -44,25 +44,29 @@ export default function PaymentForm({
       });
 
       if (error) {
+        console.error('Payment error:', error);
         onError(error.message || 'Payment failed');
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Send email with download links (for development mode)
-        // In production, the webhook handles this
-        try {
-          await fetch('/api/checkout/payment-success', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
-          });
-        } catch (emailError) {
-          console.error('Failed to send email:', emailError);
-          // Don't fail the payment if email fails
-        }
-        onSuccess();
+        setIsProcessing(false);
+        return;
       }
-    } catch {
+
+      // Check various success statuses
+      if (paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing')) {
+        // The Stripe webhook handles sending the email
+        // See: app/api/checkout/webhook/route.ts
+        onSuccess();
+      } else if (paymentIntent) {
+        // Handle other statuses
+        if (paymentIntent.status === 'requires_action') {
+          onError('Additional authentication required. Please try again.');
+        } else {
+          onError(`Payment status: ${paymentIntent.status}. Please contact support.`);
+        }
+        setIsProcessing(false);
+      }
+    } catch (err) {
+      console.error('Payment exception:', err);
       onError('An unexpected error occurred');
-    } finally {
       setIsProcessing(false);
     }
   };
@@ -104,7 +108,7 @@ export default function PaymentForm({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            Processing Payment...
+            Processing...
           </>
         ) : (
           `Pay $${total.toFixed(2)}`

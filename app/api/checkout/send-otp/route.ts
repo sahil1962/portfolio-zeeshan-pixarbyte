@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting: 3 requests per 10 minutes per IP
     const identifier = getRateLimitIdentifier(request, 'otp-send');
-    const rateLimit = rateLimiter.check(identifier, 3, 10 * 60 * 1000);
+    const rateLimit = rateLimiter.check(identifier, 30, 10 * 60 * 1000);
 
     if (!rateLimit.allowed) {
       return NextResponse.json(

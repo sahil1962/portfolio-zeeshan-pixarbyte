@@ -81,7 +81,6 @@ export async function POST(request: NextRequest) {
         };
 
         await sgMail.send(msg);
-        console.log(`✅ Free download email sent to ${email}`);
       } catch (emailError) {
         console.error('Failed to send free download email:', emailError);
         // Don't fail the request if email fails - still return success
@@ -99,33 +98,40 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create Stripe Payment Intent for paid items
+    // Create Stripe Payment Intent
+    // Stripe metadata has 500 char limit per value, so we compress item data
+    // Store ALL items (both free and paid) so email includes everything
+    const compressedItems = items.map((item: { id: string; title: string; price: number; key?: string }) => ({
+      k: item.key || item.id, // key for R2 download
+      t: item.title.substring(0, 50), // truncate title to 50 chars
+      p: item.price,
+    }));
+
+    // Split items across multiple metadata fields if needed (each field max 500 chars)
+    const itemsJson = JSON.stringify(compressedItems);
+    const metadata: Record<string, string> = {
+      email,
+      cartHash,
+      itemCount: items.length.toString(),
+    };
+
+    // Split items JSON into chunks of 490 chars (leaving room for safety)
+    const chunkSize = 490;
+    for (let i = 0; i < itemsJson.length; i += chunkSize) {
+      const chunkIndex = Math.floor(i / chunkSize);
+      metadata[`items_${chunkIndex}`] = itemsJson.substring(i, i + chunkSize);
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(total * 100), // Convert to cents
       currency: 'usd',
       automatic_payment_methods: {
         enabled: true,
       },
-      metadata: {
-        email,
-        cartHash,
-        items: JSON.stringify(
-          items.map((item: { id: string; title: string; price: number; key?: string }) => ({
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            key: item.key || item.id, // R2 key for download
-          }))
-        ),
-      },
+      metadata,
       description: `Purchase of ${items.length} maths note(s)`,
       receipt_email: email,
     });
-
-    // In development mode, webhooks don't work, so we'll send email on payment success
-    // In production, the webhook (app/api/checkout/webhook/route.ts) handles this
-    console.log('💳 Payment intent created:', paymentIntent.id);
-    console.log('📧 In production, webhook will send email to:', email);
 
     return NextResponse.json({
       success: true,
@@ -150,64 +156,66 @@ function generateFreeDownloadEmailHTML(items: Array<{ title: string; downloadUrl
     <html>
       <head>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 0 auto; }
-          .header { background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .header h1 { margin: 0; font-size: 28px; }
-          .header p { margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; }
-          .content { background: #f8f9fa; padding: 30px; }
-          .note-item { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #ea580c; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-          .note-item h3 { margin: 0 0 10px 0; color: #ea580c; font-size: 18px; }
-          .download-btn { display: inline-block; background: #ea580c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; font-weight: bold; transition: background 0.2s; }
-          .download-btn:hover { background: #c2410c; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; border-radius: 0 0 10px 10px; background: #f8f9fa; }
-          .info-box { margin-top: 30px; padding: 20px; background: #fed7aa; border-radius: 8px; border-left: 4px solid #ea580c; }
-          .info-box h4 { margin: 0 0 10px 0; color: #9a3412; font-size: 16px; }
-          .info-box ul { margin: 0; padding-left: 20px; color: #9a3412; }
-          .info-box li { margin: 5px 0; }
+          body { font-family: Arial, sans-serif; line-height: 1.8; color: #333; margin: 0; padding: 0; background-color: #f5f5f5; }
+          .container { max-width: 600px; margin: 0 auto; background: white; }
+          .header { background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); color: white; padding: 40px 30px; text-align: center; }
+          .header h1 { margin: 0; font-size: 24px; font-weight: normal; }
+          .content { padding: 40px 30px; }
+          .greeting { font-size: 16px; margin-bottom: 20px; }
+          .message { font-size: 15px; color: #555; margin-bottom: 25px; }
+          .download-section { margin: 30px 0; }
+          .download-item { background: #fff8f5; padding: 20px; margin: 15px 0; border-radius: 8px; border: 1px solid #fed7aa; }
+          .download-item h3 { margin: 0 0 15px 0; color: #ea580c; font-size: 16px; }
+          .download-btn { display: inline-block; background: #ea580c; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+          .help-text { font-size: 14px; color: #666; margin: 25px 0; padding: 20px; background: #f9fafb; border-radius: 8px; }
+          .help-text a { color: #ea580c; }
+          .signature { margin-top: 30px; font-size: 15px; }
+          .signature p { margin: 5px 0; }
+          .footer { text-align: center; padding: 20px; color: #999; font-size: 12px; background: #f9fafb; }
+          .expiry-note { font-size: 12px; color: #999; margin-top: 10px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>Your Free Notes Are Ready!</h1>
-            <p>Download your maths notes below</p>
+            <h1>Your Free Resources Are Ready!</h1>
           </div>
           <div class="content">
-            <p style="font-size: 16px; margin-bottom: 20px;">Thank you for your interest! Your free notes are ready for download:</p>
+            <p class="greeting">Dear Student,</p>
 
-            ${items
-              .map(
-                (item) => `
-              <div class="note-item">
-                <h3>${item.title}</h3>
-                <a href="${item.downloadUrl}" class="download-btn">📥 Download PDF</a>
-                <p style="font-size: 12px; color: #999; margin-top: 10px;">⏰ Download link expires in 7 days</p>
-              </div>
-            `
-              )
-              .join('')}
+            <p class="message">Thank you for your interest!</p>
+            <p class="message">Your A Level Maths resources are now ready to download.</p>
+            <p class="message">You can access them using the links below:</p>
 
-            <div class="info-box">
-              <h4>📋 Download Instructions</h4>
-              <ul>
-                <li>Click the "Download PDF" button for each note</li>
-                <li>Save the files to your device</li>
-                <li>Links are valid for 7 days</li>
-                <li>If you have any issues, contact us</li>
-              </ul>
+            <div class="download-section">
+              ${items
+                .map(
+                  (item) => `
+                <div class="download-item">
+                  <h3>${item.title}</h3>
+                  <a href="${item.downloadUrl}" class="download-btn">Download your resource</a>
+                  <p class="expiry-note">Link expires in 7 days</p>
+                </div>
+              `
+                )
+                .join('')}
             </div>
 
-            <p style="margin-top: 30px; font-size: 14px;">If you have any questions, reply to this email or contact us at <a href="mailto:${
-              process.env.SENDGRID_FROM_EMAIL
-            }" style="color: #ea580c;">${process.env.SENDGRID_FROM_EMAIL}</a></p>
+            <div class="help-text">
+              If you have any trouble accessing the material or have any questions, feel free to reply to this email and we'll be happy to help.
+              <br><br>
+              <a href="mailto:${process.env.SENDGRID_FROM_EMAIL}">${process.env.SENDGRID_FROM_EMAIL}</a>
+            </div>
 
-            <p style="margin-top: 20px; font-size: 16px; font-weight: bold;">Happy studying! 📚</p>
-            <p style="margin: 5px 0 0 0;"><strong>Zeeshan Maths</strong></p>
+            <p class="message">We hope you find these resources useful and wish you all the best with your A Level Maths studies.</p>
+
+            <div class="signature">
+              <p>Kind regards,</p>
+              <p><strong>Zeeshan Zamurred Maths</strong></p>
+            </div>
           </div>
           <div class="footer">
-            <p>This is an automated email. Please do not reply directly to this message.</p>
-            <p>&copy; ${new Date().getFullYear()} Zeeshan Maths. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} Zeeshan Zamurred Maths. All rights reserved.</p>
           </div>
         </div>
       </body>

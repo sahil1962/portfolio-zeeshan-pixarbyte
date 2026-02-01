@@ -11,16 +11,6 @@ export async function POST(request: NextRequest) {
     // - AWS SES
     // - Nodemailer with SMTP
 
-    // Example with console logging for now
-    console.log('📧 Email would be sent to:', to);
-    console.log('Customer:', customerName);
-    console.log('Order Date:', orderDate);
-    console.log('Items purchased:');
-    items.forEach((item: { title: string; price: number }) => {
-      console.log(`  - ${item.title}: $${item.price}`);
-    });
-    console.log('Total:', total);
-
     // Simulated email content
     const emailContent = {
       to,
