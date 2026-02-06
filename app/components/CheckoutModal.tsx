@@ -354,7 +354,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <form onSubmit={handleVerifyOTP} className="space-y-6">
                   <div className="text-center mb-4">
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      We sent a 6-digit code to{' '}
+                      We sent an 8-digit code to{' '}
                       <span className="font-semibold text-orange-600 dark:text-orange-400">
                         {email}
                       </span>
@@ -380,12 +380,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       id="otp"
                       value={otp}
                       onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
+                        setOtp(e.target.value.replace(/\D/g, '').slice(0, 8))
                       }
                       required
-                      maxLength={6}
+                      maxLength={8}
                       className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none text-slate-900 dark:text-white text-center text-2xl letter-spacing-wide font-mono"
-                      placeholder="000000"
+                      placeholder="00000000"
                       disabled={isLoading || retryAfter > 0}
                     />
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
@@ -395,7 +395,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
                   <button
                     type="submit"
-                    disabled={isLoading || retryAfter > 0 || otp.length !== 6}
+                    disabled={isLoading || retryAfter > 0 || otp.length !== 8}
                     className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-orange-500/30"
                   >
                     {isLoading ? 'Verifying...' : 'Verify Code'}
