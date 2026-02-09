@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
+import { sendEmail } from '@/lib/mailgun';
 import otpStore from '@/lib/otp-store';
 import rateLimiter, { getRateLimitIdentifier } from '@/lib/rate-limiter';
 import crypto from 'crypto';
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,9 +48,8 @@ export async function POST(request: NextRequest) {
     const otp = otpStore.create(email, cartHash);
 
     // Send OTP via email
-    const msg = {
+    await sendEmail({
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL!,
       subject: 'Your Verification Code - Maths Notes Purchase',
       html: `
         <!DOCTYPE html>
@@ -101,29 +98,17 @@ export async function POST(request: NextRequest) {
           </body>
         </html>
       `,
-    };
-
-    await sgMail.send(msg);
+    });
 
     return NextResponse.json({
       success: true,
       message: 'Verification code sent to your email',
-      cartHash, // Return to client for verification step
+      cartHash,
     });
   } catch (error) {
     console.error('Send OTP error:', error);
 
-    let errorMessage = 'Failed to send verification code';
-    if (error && typeof error === 'object' && 'response' in error) {
-      const sgError = error as {
-        response?: { body?: { errors?: Array<{ message: string }> } };
-      };
-      if (sgError.response?.body?.errors) {
-        errorMessage = sgError.response.body.errors
-          .map((e) => e.message)
-          .join(', ');
-      }
-    }
+    const errorMessage = error instanceof Error ? error.message : 'Failed to send verification code';
 
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }

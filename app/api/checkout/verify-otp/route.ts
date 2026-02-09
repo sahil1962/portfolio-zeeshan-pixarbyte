@@ -84,9 +84,7 @@ export async function POST(request: NextRequest) {
     if (total === 0) {
       // For free items, send email with download links
       try {
-        const sgMail = (await import('@sendgrid/mail')).default;
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-
+        const { sendEmail } = await import('@/lib/mailgun');
         const { getPresignedDownloadUrl } = await import('@/app/lib/r2');
 
         // Generate presigned download URLs (7-day expiry)
@@ -101,14 +99,11 @@ export async function POST(request: NextRequest) {
         );
 
         // Send email
-        const msg = {
+        await sendEmail({
           to: email,
-          from: process.env.SENDGRID_FROM_EMAIL!,
           subject: 'Your Free Maths Notes - Download Links',
           html: generateFreeDownloadEmailHTML(itemsWithUrls),
-        };
-
-        await sgMail.send(msg);
+        });
       } catch (emailError) {
         console.error('Failed to send free download email:', emailError);
         // Don't fail the request if email fails - still return success
@@ -232,7 +227,7 @@ function generateFreeDownloadEmailHTML(items: Array<{ title: string; downloadUrl
             <div class="help-text">
               If you have any trouble accessing the material or have any questions, feel free to reply to this email and we'll be happy to help.
               <br><br>
-              <a href="mailto:${process.env.SENDGRID_FROM_EMAIL}">${process.env.SENDGRID_FROM_EMAIL}</a>
+              <a href="mailto:${process.env.MAILGUN_FROM_EMAIL}">${process.env.MAILGUN_FROM_EMAIL}</a>
             </div>
 
             <p class="message">We hope you find these resources useful and wish you all the best with your A Level Maths studies.</p>

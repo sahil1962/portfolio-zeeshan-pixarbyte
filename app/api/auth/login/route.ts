@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
+import { sendEmail } from '@/lib/mailgun';
 import { SignJWT } from 'jose';
 import { randomBytes } from 'crypto';
 import { getJWTSecret } from '@/lib/jwt-secret';
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const AUTHORIZED_EMAILS = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
 
@@ -40,9 +38,8 @@ export async function POST(request: NextRequest) {
     const magicLink = `${baseUrl}/api/auth/verify?token=${token}`;
 
     // Send email with magic link
-    const msg = {
+    await sendEmail({
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL!,
       subject: 'Admin Login - Magic Link',
       text: `Click this link to login to your admin panel: ${magicLink}\n\nThis link will expire in 15 minutes.`,
       html: `
@@ -57,9 +54,7 @@ export async function POST(request: NextRequest) {
           <p style="color: #666; font-size: 14px;">If you didn't request this login, please ignore this email.</p>
         </div>
       `,
-    };
-
-    await sgMail.send(msg);
+    });
 
     return NextResponse.json({
       success: true,
@@ -69,14 +64,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Login error:', error);
 
-    // Extract SendGrid error details
-    let errorMessage = 'Failed to send magic link';
-    if (error && typeof error === 'object' && 'response' in error) {
-      const sgError = error as { response?: { body?: { errors?: Array<{ message: string }> } } };
-      if (sgError.response?.body?.errors) {
-        errorMessage = sgError.response.body.errors.map((e) => e.message).join(', ');
-      }
-    }
+    const errorMessage = error instanceof Error ? error.message : 'Failed to send magic link';
 
     return NextResponse.json({
       error: errorMessage,

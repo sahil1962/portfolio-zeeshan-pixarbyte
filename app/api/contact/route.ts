@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+import { sendEmail } from '@/lib/mailgun';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,9 +33,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email to admin
-    const msg = {
+    await sendEmail({
       to: adminEmail,
-      from: process.env.SENDGRID_FROM_EMAIL!,
       replyTo: email,
       subject: `Contact Form: ${subject}`,
       text: `
@@ -81,9 +78,7 @@ ${message}
           </div>
         </div>
       `,
-    };
-
-    await sgMail.send(msg);
+    });
 
     return NextResponse.json({
       success: true,
@@ -93,14 +88,7 @@ ${message}
   } catch (error) {
     console.error('Contact form error:', error);
 
-    // Extract SendGrid error details
-    let errorMessage = 'Failed to send message';
-    if (error && typeof error === 'object' && 'response' in error) {
-      const sgError = error as { response?: { body?: { errors?: Array<{ message: string }> } } };
-      if (sgError.response?.body?.errors) {
-        errorMessage = sgError.response.body.errors.map((e) => e.message).join(', ');
-      }
-    }
+    const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
 
     return NextResponse.json({
       error: errorMessage,

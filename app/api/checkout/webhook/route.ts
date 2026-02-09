@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import sgMail from '@sendgrid/mail';
+import { sendEmail } from '@/lib/mailgun';
 import { getPresignedDownloadUrl } from '@/app/lib/r2';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -8,8 +8,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 interface PurchaseItem {
   key: string;
@@ -77,18 +75,15 @@ export async function POST(request: NextRequest) {
       );
 
       // Send email with download links
-      const msg = {
+      await sendEmail({
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL!,
         subject: 'Your Maths Notes - Download Links',
         html: generatePurchaseEmailHTML(
           itemsWithUrls,
           total,
           paymentIntent.id
         ),
-      };
-
-      await sgMail.send(msg);
+      });
 
       // Mark email as sent in payment intent metadata to prevent duplicates
       await stripe.paymentIntents.update(paymentIntent.id, {
@@ -175,7 +170,7 @@ function generatePurchaseEmailHTML(
             <div class="help-text">
               If you have any trouble accessing the material or have any questions, feel free to reply to this email and we'll be happy to help.
               <br><br>
-              <a href="mailto:${process.env.SENDGRID_FROM_EMAIL}">${process.env.SENDGRID_FROM_EMAIL}</a>
+              <a href="mailto:${process.env.MAILGUN_FROM_EMAIL}">${process.env.MAILGUN_FROM_EMAIL}</a>
             </div>
 
             <p class="message">We hope you find these resources useful and wish you all the best with your A Level Maths studies.</p>
