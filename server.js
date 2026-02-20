@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 const path = require('path');
 const dir = path.join(__dirname);
