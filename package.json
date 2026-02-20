@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "test -d node_modules/dotenv || npm install dotenv",
     "start": "next start",
     "lint": "eslint"
   },

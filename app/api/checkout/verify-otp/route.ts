@@ -80,6 +80,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Stripe minimum charge is $0.50 USD for paid orders
+    const STRIPE_MINIMUM_AMOUNT = 0.5;
+    if (total > 0 && total < STRIPE_MINIMUM_AMOUNT) {
+      return NextResponse.json(
+        {
+          error: `Order total ($${total.toFixed(2)}) is below the minimum charge amount of $${STRIPE_MINIMUM_AMOUNT.toFixed(2)}. Please add more items or contact support.`,
+        },
+        { status: 400 }
+      );
+    }
+
     // Handle free items (total = 0)
     if (total === 0) {
       // For free items, send email with download links

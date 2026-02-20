@@ -6,11 +6,20 @@ import { useState, useEffect, useRef } from 'react';
 import NotesGrid from './NotesGrid';
 import { Note } from './NotesMarketplace';
 
+type PriceFilter = 'all' | 'free' | 'paid';
+
 export default function FullCatalog() {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [filter, setFilter] = useState<PriceFilter>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasFetchedRef = useRef(false);
+
+  const filteredNotes = notes.filter((note) => {
+    if (filter === 'free') return note.price === 0;
+    if (filter === 'paid') return note.price > 0;
+    return true;
+  });
 
   useEffect(() => {
     // Prevent duplicate fetches in React Strict Mode (development)
@@ -107,10 +116,16 @@ export default function FullCatalog() {
     );
   }
 
+  const filterOptions: { id: PriceFilter; label: string }[] = [
+    { id: 'all', label: 'All Resources' },
+    { id: 'free', label: 'Free' },
+    { id: 'paid', label: 'Paid' },
+  ];
+
   return (
     <section className="relative py-20 bg-white dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
+        <div className="mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4 text-center">
             All Available Resources
           </h2>
@@ -119,7 +134,31 @@ export default function FullCatalog() {
           </p>
         </div>
 
-        <NotesGrid notes={notes} />
+        {/* Free / Paid filter */}
+        <div className="flex flex-wrap gap-3 justify-center mb-10">
+          {filterOptions.map(({ id, label }) => (
+            <button
+              key={id}
+              onClick={() => setFilter(id)}
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                filter === id
+                  ? 'bg-orange-600 text-white shadow-lg shadow-orange-500/30'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              {label}
+              {id !== 'all' && (
+                <span className="ml-2 text-xs opacity-75">
+                  ({id === 'free'
+                    ? notes.filter((n) => n.price === 0).length
+                    : notes.filter((n) => n.price > 0).length})
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <NotesGrid notes={filteredNotes} />
       </div>
     </section>
   );
