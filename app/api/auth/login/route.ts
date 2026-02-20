@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       .sign(getJWTSecret());
 
     // Use request origin as fallback when env var isn't available
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
+    const baseUrl = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin;
     const magicLink = `${baseUrl}/api/auth/verify?token=${token}`;
 
     // Send email with magic link
