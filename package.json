@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node -e \"const fs=require('fs');const vars=['R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET_NAME','JWT_SECRET','ADMIN_EMAILS','MAILGUN_API_KEY','MAILGUN_DOMAIN','MAILGUN_FROM_EMAIL','MAILGUN_REGION','NEXT_PUBLIC_BASE_URL','BASE_URL','NEXT_PUBLIC_NODE_ENV','STRIPE_SECRET_KEY','NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY','STRIPE_WEBHOOK_SECRET'];const lines=vars.filter(k=>process.env[k]).map(k=>k+'='+process.env[k]);fs.writeFileSync('.env',lines.join('\\n')+'\\n');console.log('.env written with',lines.length,'vars');\"",
     "start": "next start",
     "lint": "eslint"
   },
