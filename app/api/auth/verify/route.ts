@@ -4,12 +4,14 @@ import { getJWTSecret } from '@/lib/jwt-secret';
 import tokenBlacklist from '@/lib/token-blacklist';
 
 export async function GET(request: NextRequest) {
+  const baseUrl = 'https://zeeshanzamurred.com';
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.redirect(new URL('/admin/login?error=missing_token', request.url));
+      return NextResponse.redirect(new URL('/admin/login?error=missing_token', baseUrl));
     }
 
     // Verify the magic link token
@@ -18,7 +20,7 @@ export async function GET(request: NextRequest) {
     // Check if this is a magic link token
     if (payload.type !== 'magic_link') {
       return NextResponse.redirect(
-        new URL('/admin/login?error=invalid_token', request.url)
+        new URL('/admin/login?error=invalid_token', baseUrl)
       );
     }
 
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
     const nonce = payload.nonce as string;
     if (!nonce || tokenBlacklist.isBlacklisted(nonce)) {
       return NextResponse.redirect(
-        new URL('/admin/login?error=token_already_used', request.url)
+        new URL('/admin/login?error=token_already_used', baseUrl)
       );
     }
 
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
       .sign(getJWTSecret());
 
     // Create response with redirect
-    const response = NextResponse.redirect(new URL('/admin', request.url));
+    const response = NextResponse.redirect(new URL('/admin', baseUrl));
 
     // Set HTTP-only cookie
     response.cookies.set('admin_session', sessionToken, {
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Verify error:', error);
     return NextResponse.redirect(
-      new URL('/admin/login?error=invalid_token', request.url)
+      new URL('/admin/login?error=invalid_token', baseUrl)
     );
   }
 }
