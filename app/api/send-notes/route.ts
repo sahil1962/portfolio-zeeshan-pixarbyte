@@ -43,13 +43,13 @@ export async function POST(request: NextRequest) {
                 ${items.map((item: { title: string; price: number; pages: number }) => `
                   <div class="note-item">
                     <h4>${item.title}</h4>
-                    <p>${item.pages} pages - $${item.price.toFixed(2)}</p>
+                    <p>${item.pages} pages - £${item.price.toFixed(2)}</p>
                     <a href="#" class="download-btn">Download PDF</a>
                   </div>
                 `).join('')}
 
                 <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
-                  <strong>Total Paid: $${total.toFixed(2)}</strong>
+                  <strong>Total Paid: £${total.toFixed(2)}</strong>
                 </div>
 
                 <p style="margin-top: 20px;">

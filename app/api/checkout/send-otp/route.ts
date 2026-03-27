@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
                 <div class="info-box">
                   <p style="margin: 0; font-size: 14px;"><strong>Order Summary:</strong></p>
                   <p style="margin: 5px 0 0 0;"><strong>Items:</strong> ${items.length} note(s)</p>
-                  <p style="margin: 5px 0 0 0;"><strong>Total:</strong> $${cartTotal.toFixed(2)}</p>
+                  <p style="margin: 5px 0 0 0;"><strong>Total:</strong> £${cartTotal.toFixed(2)}</p>
                 </div>
               </div>
               <div class="footer">

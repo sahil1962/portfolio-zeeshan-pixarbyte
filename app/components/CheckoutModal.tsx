@@ -287,14 +287,14 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         {item.title}
                       </span>
                       <span className="font-medium text-slate-900 dark:text-white">
-                        ${item.price.toFixed(2)}
+                        £{item.price.toFixed(2)}
                       </span>
                     </div>
                   ))}
                   <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between font-bold">
                     <span className="text-slate-900 dark:text-white">Total</span>
                     <span className="text-orange-600 dark:text-orange-400">
-                      ${getCartTotal().toFixed(2)}
+                      £{getCartTotal().toFixed(2)}
                     </span>
                   </div>
                 </div>

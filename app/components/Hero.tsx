@@ -23,7 +23,7 @@ export default function Hero() {
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
-                <span className="text-slate-900 dark:text-white">Edexcel ALevel </span>
+                <span className="text-slate-900 dark:text-white">Edexcel A-Level </span>
                 <span className="bg-linear-to-r from-orange-600 via-amber-600 to-orange-600 bg-clip-text text-transparent">Maths and Further Maths </span>
                 <span className="text-slate-900 dark:text-white">Made Clear</span>
               </h1>
@@ -118,7 +118,7 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-white">Certified Educator</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400">ALevel Specialist</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">A-Level Specialist</div>
                   </div>
                 </div>
               </div>

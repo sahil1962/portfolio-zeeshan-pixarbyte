@@ -111,7 +111,7 @@ export default function PaymentForm({
             Processing...
           </>
         ) : (
-          `Pay $${total.toFixed(2)}`
+          `Pay £${total.toFixed(2)}`
         )}
       </button>
 

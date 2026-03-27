@@ -82,7 +82,7 @@ export default function Cart() {
                       {item.pages} pages
                     </span>
                     <span className="font-bold text-slate-900 dark:text-white">
-                      ${item.price.toFixed(2)}
+                      £{item.price.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export default function Cart() {
               <div className="flex justify-between items-center text-lg font-bold">
                 <span className="text-slate-900 dark:text-white">Total:</span>
                 <span className="text-orange-600 dark:text-orange-400">
-                  ${getCartTotal().toFixed(2)}
+                  £{getCartTotal().toFixed(2)}
                 </span>
               </div>
               <button

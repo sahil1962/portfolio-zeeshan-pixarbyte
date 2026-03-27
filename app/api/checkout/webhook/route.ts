@@ -181,7 +181,7 @@ function generatePurchaseEmailHTML(
             </div>
 
             <div class="transaction-info">
-              Transaction ID: ${paymentIntentId} | Total: $${total.toFixed(2)}
+              Transaction ID: ${paymentIntentId} | Total: £${total.toFixed(2)}
             </div>
           </div>
           <div class="footer">

@@ -80,12 +80,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Stripe minimum charge is $0.50 USD for paid orders
-    const STRIPE_MINIMUM_AMOUNT = 0.5;
+    // Stripe minimum charge is £0.30 GBP for paid orders
+    const STRIPE_MINIMUM_AMOUNT = 0.3;
     if (total > 0 && total < STRIPE_MINIMUM_AMOUNT) {
       return NextResponse.json(
         {
-          error: `Order total ($${total.toFixed(2)}) is below the minimum charge amount of $${STRIPE_MINIMUM_AMOUNT.toFixed(2)}. Please add more items or contact support.`,
+          error: `Order total (£${total.toFixed(2)}) is below the minimum charge amount of £${STRIPE_MINIMUM_AMOUNT.toFixed(2)}. Please add more items or contact support.`,
         },
         { status: 400 }
       );
@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(total * 100), // Convert to cents
-      currency: 'usd',
+      amount: Math.round(total * 100), // Convert to pence
+      currency: 'gbp',
       automatic_payment_methods: {
         enabled: true,
       },

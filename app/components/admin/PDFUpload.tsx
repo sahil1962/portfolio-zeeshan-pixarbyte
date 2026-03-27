@@ -223,7 +223,7 @@ export default function PDFUpload({ onUploadSuccess }: { onUploadSuccess?: () =>
         {/* Price */}
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Price (USD) *
+            Price (GBP) *
           </label>
           <input
             id="price"
