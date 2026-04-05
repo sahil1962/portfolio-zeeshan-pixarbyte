@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Zeeshan Maths | A-Level Maths Resources",
   description: "Structured Edexcel A-Level Maths and Further Maths video lessons and resources. Step-by-step explanations, exam-focused content, and practice materials.",
+  icons: {
+    icon: "/youtube_logo.jpg",
+  },
 };
 
 export default function RootLayout({
